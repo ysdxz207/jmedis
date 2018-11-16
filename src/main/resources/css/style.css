@@ -63,8 +63,6 @@ Label {
     -fx-min-width: 330px;
 }
 
-ChoiceBox {
-    -fx-min-width: 162px;
-    -fx-pref-height: 32px;
-    -fx-background-color: #ff9e8f;
+.combo-format {
+    -fx-min-width: 100px;
 }

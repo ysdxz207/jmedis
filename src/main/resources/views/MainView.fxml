@@ -3,40 +3,37 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextArea?>
 
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<BorderPane style="-fx-pref-width: 960; -fx-pref-height: 580" xmlns="http://javafx.com/javafx/8.0.121"
+<?import javafx.scene.control.Tooltip?>
+<BorderPane prefWidth="960" prefHeight="580" xmlns="http://javafx.com/javafx/8.0.172-ea"
             xmlns:fx="http://javafx.com/fxml/1">
     <VBox>
         <padding>
-            <Insets top="10" left="20"/>
+            <Insets left="20" top="10"/>
         </padding>
-        <HBox HBox.hgrow="ALWAYS" spacing="6" styleClass="header">
+        <HBox spacing="6" styleClass="header" minWidth="920" maxWidth="920" prefWidth="920">
             <Button fx:id="btnShowCreateConfig" onAction="#showCreateConfigDialog" styleClass="btn-show-create-config"
                     text="New Config"/>
             <Label alignment="CENTER" minWidth="20" text="Or"/>
             <ComboBox fx:id="comboConfig" promptText="Select Config"/>
             <Button fx:id="btnDeleteConfig" onAction="#showDeleteConfigConfirm" text="← Delete"/>
-            <ChoiceBox fx:id="choiceChooseDatabase">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="DB0"/>
-                        <String fx:value="DB1"/>
-                        <String fx:value="DB2"/>
-                    </FXCollections>
-                </items>
-            </ChoiceBox>
+            <ComboBox fx:id="comboChooseDatabase" promptText="Choose Database"/>
+            <Region HBox.hgrow="ALWAYS">
+                <opaqueInsets>
+                    <Insets/>
+                </opaqueInsets>
+            </Region>
             <ComboBox fx:id="comboOptKey" promptText="Operation"/>
         </HBox>
         <HBox>
@@ -56,19 +53,30 @@
             </VBox>
             <VBox>
                 <padding>
-                    <Insets top="10" left="8"/>
+                    <Insets left="8" top="10"/>
                 </padding>
                 <VBox>
-                    <HBox HBox.hgrow="ALWAYS" spacing="4">
+                    <HBox spacing="4" HBox.hgrow="ALWAYS">
                         <TextField prefWidth="10000" promptText="show key"/>
                         <TextField prefWidth="10000" promptText="show field"/>
+                        <ComboBox fx:id="comboDataFormat" value="Text" styleClass="combo-format">
+                            <tooltip>
+                                <Tooltip text="Data format."/>
+                            </tooltip>
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Json"/>
+                                    <String fx:value="Text"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
                     </HBox>
                 </VBox>
                 <VBox>
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <TextArea minWidth="610" minHeight="480"/>
+                    <TextArea minHeight="480" minWidth="610"/>
                 </VBox>
             </VBox>
         </HBox>

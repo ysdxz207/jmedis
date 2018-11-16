@@ -10,13 +10,20 @@ import tornadofx.*
 class MainView : View() {
     override val root : BorderPane by fxml("/views/MainView.fxml")
 
-    val choiceChooseDatabase: ChoiceBox<String> by fxid()
+    val comboChooseDatabase: ComboBox<String> by fxid()
     val comboOptKey: ComboBox<String> by fxid()
     val listViewKeys: ListView<String> by fxid()
 
     init {
         title = "Jmedis"
         currentStage?.isResizable = false
+
+
+        val dbList = FXCollections.observableArrayList("DB0", "DB1")
+        comboChooseDatabase.asyncItems {
+            dbList
+        }
+
 
         val optList = FXCollections.observableArrayList("Update", "Delete")
         comboOptKey.asyncItems {
