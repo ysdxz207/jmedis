@@ -45,10 +45,14 @@ ComboBox {
     -fx-background-color: #3ee849;
 }
 
-.config-dialog Label {
+Label {
     -fx-pref-height: 32px;
     -fx-min-width: 40px;
     -fx-font-weight: bold;
+}
+
+.header Label {
+    -fx-min-width: 20px;
 }
 
 .config-dialog .title {
@@ -57,4 +61,10 @@ ComboBox {
 
 .config-dialog TextField, .config-dialog PasswordField {
     -fx-min-width: 330px;
+}
+
+ChoiceBox {
+    -fx-min-width: 162px;
+    -fx-pref-height: 32px;
+    -fx-background-color: #ff9e8f;
 }

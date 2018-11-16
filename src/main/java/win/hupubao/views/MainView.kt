@@ -1,9 +1,6 @@
 package win.hupubao.views
 
-import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.collections.ObservableArray
-import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import javafx.stage.Modality
@@ -13,16 +10,17 @@ import tornadofx.*
 class MainView : View() {
     override val root : BorderPane by fxml("/views/MainView.fxml")
 
-    val comboConfig: ComboBox<String> by fxid()
+    val choiceChooseDatabase: ChoiceBox<String> by fxid()
+    val comboOptKey: ComboBox<String> by fxid()
     val listViewKeys: ListView<String> by fxid()
 
     init {
         title = "Jmedis"
         currentStage?.isResizable = false
 
-        val configList = FXCollections.observableArrayList("aa", "bb")
-        comboConfig.asyncItems {
-            configList
+        val optList = FXCollections.observableArrayList("Update", "Delete")
+        comboOptKey.asyncItems {
+            optList
         }
 
         val keysList = FXCollections.observableArrayList("111", "2222")
