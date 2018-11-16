@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import tornadofx.Field?>
+<?import tornadofx.Fieldset?>
+<?import tornadofx.Form?>
+<?import javafx.scene.control.ButtonBar?>
+
+<BorderPane prefWidth="400" prefHeight="240" xmlns="http://javafx.com/javafx/8.0.121"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <Form>
+        <Fieldset text="New Config" inputGrow="SOMETIMES" minWidth="380">
+            <Field text="alias">
+                <TextField fx:id="alias"/>
+            </Field>
+            <Field text="host">
+                <TextField fx:id="host" text="localhost"/>
+            </Field>
+            <Field text="port">
+                <TextField fx:id="port" text="6379"/>
+            </Field>
+            <Field text="auth">
+                <PasswordField fx:id="auth" promptText="Keep empty without auth."/>
+            </Field>
+            <ButtonBar>
+                <buttons>
+                    <Button fx:id="btnCreateConfig" onAction="#createNewConfig" text="Save Config"/>
+                </buttons>
+            </ButtonBar>
+        </Fieldset>
+    </Form>
+    <stylesheets>
+        <URL value="@../css/style.css"/>
+    </stylesheets>
+</BorderPane>
