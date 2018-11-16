@@ -33,11 +33,6 @@ ComboBox {
     -fx-font-size: 14px;
 }
 
-Label {
-    -fx-font-weight: bold;
-    -fx-max-width: 10px;
-}
-
 .btn-show-create-config {
     -fx-background-color: #53da85;
 }
@@ -48,4 +43,18 @@ Label {
 
 .btn-show-create-config:pressed {
     -fx-background-color: #3ee849;
+}
+
+.config-dialog Label {
+    -fx-pref-height: 32px;
+    -fx-min-width: 40px;
+    -fx-font-weight: bold;
+}
+
+.config-dialog .title {
+    -fx-min-width: 120px;
+}
+
+.config-dialog TextField, .config-dialog PasswordField {
+    -fx-min-width: 330px;
 }
