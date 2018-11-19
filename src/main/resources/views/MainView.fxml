@@ -24,7 +24,7 @@
         </padding>
         <HBox spacing="6" styleClass="header" minWidth="920" maxWidth="920" prefWidth="920">
             <ComboBox fx:id="comboConfig" />
-            <Button onAction="#showEditConfigDialog" text="Create or Edit" styleClass="btn-success"/>
+            <Button fx:id="btnCreateOrEdit" onAction="#showEditConfigDialog" text="Create or Edit" styleClass="btn-success"/>
             <ComboBox fx:id="comboChooseDatabase" promptText="Choose Database"/>
             <Region HBox.hgrow="ALWAYS">
                 <opaqueInsets>

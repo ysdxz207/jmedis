@@ -16,6 +16,7 @@ import win.hupubao.utils.ConfigUtils
 class MainView : View() {
     override val root : BorderPane by fxml("/views/MainView.fxml")
 
+    val btnCreateOrEdit: Button by fxid()
     val comboConfig: ComboBox<RedisConfig> by fxid()
     val comboChooseDatabase: ComboBox<String> by fxid()
     val comboOptKey: ComboBox<String> by fxid()
@@ -32,9 +33,11 @@ class MainView : View() {
 
 
         loadComboRedisConfig(null)
+        setbtnCreateOrEditText()
         comboConfig.onAction = EventHandler {
-
+            setbtnCreateOrEditText()
         }
+
 
 
         val dbList = FXCollections.observableArrayList("DB0", "DB1")
@@ -48,6 +51,21 @@ class MainView : View() {
         val keysList = FXCollections.observableArrayList("111", "2222")
         listViewKeys.items = keysList
 
+    }
+
+    private fun setbtnCreateOrEditText() {
+
+        if (comboConfig.selectedItem != null) {
+
+            val redisConfig: RedisConfig = comboConfig.selectedItem as RedisConfig
+            if (redisConfig.id == null) {
+                btnCreateOrEdit.text = "Create"
+            } else {
+                btnCreateOrEdit.text = "Edit"
+            }
+        } else {
+            btnCreateOrEdit.text = "Create"
+        }
     }
 
     fun showEditConfigDialog() {

@@ -12,6 +12,8 @@ class EditConfigFragment : Fragment() {
     override val root: BorderPane by fxml("/views/ConfigDialog.fxml")
 
 
+    private val mainView: MainView by inject()
+
     private val labelTitle: Label by fxid()
 
     private val alias: TextField by fxid()
@@ -25,7 +27,6 @@ class EditConfigFragment : Fragment() {
 
     init {
         currentStage?.isResizable = false
-        val mainView = find(MainView::class)
 
         // load redis configuration info
         if (mainView.comboConfig.selectedItem != null) {
@@ -56,6 +57,8 @@ class EditConfigFragment : Fragment() {
             return
         }
 
+        close()
+
         val config = ConfigUtils.get()
         val redisConfig = RedisConfig()
         redisConfig.alias = if (alias.text == null || alias.text.isEmpty()) host.text else alias.text
@@ -82,8 +85,6 @@ class EditConfigFragment : Fragment() {
         ConfigUtils.save(config)
         ConfigUtils.fireChanged()
 
-        close()
-        val mainView = find(MainView::class)
         mainView.loadComboRedisConfig(redisConfig)
 
     }
@@ -93,7 +94,6 @@ class EditConfigFragment : Fragment() {
     }
 
     fun deleteConfig() {
-        val mainView = find(MainView::class)
         confirmation("", "Are you sure to delete this config ?") {
             if (it == ButtonType.OK && mainView.comboConfig.selectedItem != null) {
                 closeDialog()
