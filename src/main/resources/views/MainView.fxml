@@ -23,11 +23,8 @@
             <Insets left="20" top="10"/>
         </padding>
         <HBox spacing="6" styleClass="header" minWidth="920" maxWidth="920" prefWidth="920">
-            <Button fx:id="btnShowCreateConfig" onAction="#showCreateConfigDialog" styleClass="btn-show-create-config"
-                    text="New Config"/>
-            <Label alignment="CENTER" minWidth="20" text="Or"/>
-            <ComboBox fx:id="comboConfig" promptText="Select Config"/>
-            <Button fx:id="btnDeleteConfig" onAction="#showDeleteConfigConfirm" text="← Delete"/>
+            <ComboBox fx:id="comboConfig" />
+            <Button onAction="#showEditConfigDialog" text="Create or Edit" styleClass="btn-success"/>
             <ComboBox fx:id="comboChooseDatabase" promptText="Choose Database"/>
             <Region HBox.hgrow="ALWAYS">
                 <opaqueInsets>

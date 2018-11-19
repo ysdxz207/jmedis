@@ -33,15 +33,15 @@ ComboBox {
     -fx-font-size: 14px;
 }
 
-.btn-show-create-config {
+.btn-success {
     -fx-background-color: #53da85;
 }
 
-.btn-show-create-config:hover {
+.btn-success:hover {
     -fx-background-color: #78e899;
 }
 
-.btn-show-create-config:pressed {
+.btn-success:pressed {
     -fx-background-color: #3ee849;
 }
 

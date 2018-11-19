@@ -21,7 +21,7 @@
             <padding>
                 <Insets bottom="10" left="10" top="8" />
             </padding>
-            <Label text="New Config" styleClass="title"/>
+            <Label fx:id="labelTitle" styleClass="title"/>
         </HBox>
         <HBox>
             <padding>
@@ -49,12 +49,16 @@
                 <Insets bottom="10" left="10" />
             </padding>
             <Label text="auth" />
-            <PasswordField fx:id="auth" promptText="Keep empty without auth." />
+            <TextField fx:id="auth" promptText="Keep empty without auth." />
         </HBox>
         <HBox>
             <ButtonBar minWidth="380">
+                <padding>
+                    <Insets bottom="10" left="10" />
+                </padding>
                 <buttons>
-                    <Button fx:id="btnCreateConfig" ButtonBar.buttonData="RIGHT" onAction="#createNewConfig" text="Save Config" />
+                    <Button fx:id="btnDelete" ButtonBar.buttonData="LEFT" onAction="#deleteConfig" text="Delete" />
+                    <Button ButtonBar.buttonData="RIGHT" onAction="#editConfig" text="Save" styleClass="btn-success"/>
                 </buttons>
             </ButtonBar>
         </HBox>

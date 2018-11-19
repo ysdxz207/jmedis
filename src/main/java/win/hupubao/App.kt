@@ -1,8 +1,9 @@
 package win.hupubao
 
+import javafx.stage.Stage
 import tornadofx.App
 import win.hupubao.views.MainView
 
-class App : App() {
+object App : App() {
     override val primaryView = MainView::class
 }
