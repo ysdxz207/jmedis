@@ -137,7 +137,7 @@ class MainView : View() {
             }
             try {
                 if (StringUtils.isEmpty(textFieldHKey.text)) {
-                    RedisUtils.() = textAreaValue.text
+                    RedisUtils.hdel(textFieldKey.text, textFieldHKey.text)
                 } else {
                     RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
                 }

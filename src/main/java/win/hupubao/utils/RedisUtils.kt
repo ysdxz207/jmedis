@@ -222,4 +222,8 @@ object RedisUtils {
     fun hvals(key: String): List<String> {
         return jedis.use { jedis -> jedis.hvals(key) }
     }
+
+    fun hdel(key: String, field: String): Long {
+        return jedis.use { jedis -> jedis.hdel(key, field) }
+    }
 }
