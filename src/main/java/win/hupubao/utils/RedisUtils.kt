@@ -103,7 +103,7 @@ object RedisUtils {
 
     }
 
-    operator fun get(key: String): String {
+    operator fun get(key: String): String? {
         jedis.use { jedis -> return jedis.get(key) }
     }
 
@@ -112,6 +112,14 @@ object RedisUtils {
         return if (StringUtils.isEmpty(str)) {
             null
         } else JSON.parseObject(str, clazz)
+    }
+
+    fun hget(key: String, field: String): String? {
+        jedis.use { jedis -> return jedis.hget(key, field) }
+    }
+
+    fun hset(key: String, field: String, value: String): Long {
+        jedis.use { jedis -> return jedis.hset(key, field, value) }
     }
 
     fun <T> getList(key: String, clazz: Class<T>): List<T>? {
@@ -205,5 +213,13 @@ object RedisUtils {
 
         print(JSON.toJSONString(dbList()))
 
+    }
+
+    fun hkeys(key: String): Set<String> {
+        return jedis.use { jedis -> jedis.hkeys(key) }
+    }
+
+    fun hvals(key: String): List<String> {
+        return jedis.use { jedis -> jedis.hvals(key) }
     }
 }

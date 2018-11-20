@@ -54,9 +54,9 @@
                 </padding>
                 <VBox>
                     <HBox spacing="4" HBox.hgrow="ALWAYS">
-                        <TextField prefWidth="10000" promptText="show key"/>
-                        <TextField prefWidth="10000" promptText="show field"/>
-                        <ComboBox fx:id="comboDataFormat" value="Text" styleClass="combo-format">
+                        <TextField fx:id="textFieldKey" prefWidth="10000" promptText="key"/>
+                        <TextField fx:id="textFieldHKey" prefWidth="10000" promptText="field"/>
+                        <ComboBox fx:id="comboDataFormat" value="Json" styleClass="combo-format">
                             <tooltip>
                                 <Tooltip text="Data format."/>
                             </tooltip>
@@ -73,7 +73,7 @@
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <TextArea minHeight="480" minWidth="610"/>
+                    <TextArea fx:id="textAreaValue" minHeight="480" minWidth="610"/>
                 </VBox>
             </VBox>
         </HBox>

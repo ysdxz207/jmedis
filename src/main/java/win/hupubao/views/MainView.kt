@@ -1,18 +1,19 @@
 package win.hupubao.views
 
+import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.serializer.SerializerFeature
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
-import javafx.scene.control.Button
-import javafx.scene.control.ComboBox
-import javafx.scene.control.ListView
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.stage.Modality
 import javafx.stage.StageStyle
+import redis.clients.jedis.exceptions.JedisDataException
 import tornadofx.*
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
+import win.hupubao.enums.ValueFormat
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
@@ -26,6 +27,10 @@ class MainView : View() {
     val comboOptKey: ComboBox<String> by fxid()
     val listViewKeys: ListView<String> by fxid()
     val textFieldPattern: TextField by fxid()
+    val textFieldKey: TextField by fxid()
+    val textAreaValue: TextArea by fxid()
+    val comboDataFormat: ComboBox<String> by fxid()
+    val textFieldHKey: TextField by fxid()
 
 
     init {
@@ -55,20 +60,20 @@ class MainView : View() {
                 RedisUtils.selectDB(redisDB.index!!)
 
                 // make key/pattern textfield change
-                if (StringUtils.isEmpty(textFieldPattern.text) || "*" == textFieldPattern.text) {
-                    textFieldPattern.text = ""
+                if (StringUtils.isEmpty(textFieldPattern.text)) {
                     textFieldPattern.text = "*"
-                } else {
-                    val temp = textFieldPattern.text
-                    textFieldPattern.text = ""
-                    textFieldPattern.text = temp
                 }
+
+                // reload keys
+                loadKeyListToViewList()
+                // reload value
+                loadValuetoTextField(textFieldKey.text)
+
             }
         }
 
         // on key/pattern textfield text change
         textFieldPattern.textProperty().onChange {
-
             loadKeyListToViewList()
         }
 
@@ -79,8 +84,56 @@ class MainView : View() {
             }
         }
 
+        // on select key listView
+        listViewKeys.onUserSelect(1) {
+            textFieldKey.text = it
+            loadValuetoTextField(it)
+        }
+
+        // on change value format combo
+        comboDataFormat.onAction = EventHandler {
+            textAreaValue.text = formatValue(textAreaValue.text)
+        }
+
+        // on key textfield typed in Enter
+        textFieldKey.onKeyReleased = EventHandler {
+            if (it.code == KeyCode.ENTER) {
+                loadValuetoTextField(textFieldKey.text)
+            }
+        }
+
         val optList = FXCollections.observableArrayList("Update", "Delete")
         comboOptKey.items = optList
+    }
+
+    private fun loadValuetoTextField(key: String?) {
+        if (StringUtils.isEmpty(key)) {
+            return
+        }
+        val text: String? = try {
+            RedisUtils[key!!]
+        } catch (e: JedisDataException) {
+            // hash
+            JSON.toJSONString(RedisUtils.hvals(key!!), SerializerFeature.BrowserSecure)
+        }
+
+        textAreaValue.text = formatValue(text)
+    }
+
+    private fun formatValue(value: String?): String {
+
+        if (value == null) {
+            return ""
+        }
+        return when(getValueFormat()) {
+            ValueFormat.Json -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
+            ValueFormat.Text -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value)) else value
+        }
+    }
+
+    private fun getValueFormat(): ValueFormat {
+        val valueFormatStr = if (comboDataFormat.selectedItem != null) comboDataFormat.selectedItem as String else ValueFormat.Json.name
+        return ValueFormat.valueOf(valueFormatStr)
     }
 
     private fun loadKeyListToViewList() {
