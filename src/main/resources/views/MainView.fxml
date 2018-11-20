@@ -39,13 +39,13 @@
                     <Insets top="10"/>
                 </padding>
                 <VBox>
-                    <TextField promptText="key/pattern"/>
+                    <TextField fx:id="textFieldPattern" promptText="key/pattern"/>
                 </VBox>
                 <VBox>
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <ListView fx:id="listViewKeys" minHeight="480" minWidth="300"/>
+                    <ListView fx:id="listViewKeys" minHeight="480" minWidth="300" />
                 </VBox>
             </VBox>
             <VBox>
