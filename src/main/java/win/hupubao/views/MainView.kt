@@ -45,14 +45,27 @@ class MainView : View() {
         setBtnCreateOrEditText()
         // on select redis configuration
         comboConfig.onAction = EventHandler {
-            // change "create or edit button" text
-            setBtnCreateOrEditText()
-            // load db list
-            loadDbList()
             // reset key/pattern textfield text
             textFieldPattern.text = ""
             // reset key list
             listViewKeys.items = null
+            // reset database list
+            comboChooseDatabase.items = null
+            // check redis configuration
+            if (getSelectedRedisConfig() == null) {
+                return@EventHandler
+            }
+            try {
+                initRedis()
+            } catch (e: Exception) {
+                error("", "Redis connection failed,please check your redis configuration.")
+                return@EventHandler
+            }
+            // change "create or edit button" text
+            setBtnCreateOrEditText()
+            // load db list
+            loadDbList()
+
         }
 
         // on choose database
@@ -135,17 +148,33 @@ class MainView : View() {
             if (getSelectedDatabase() == null) {
                 return@EventHandler
             }
-            try {
-                if (StringUtils.isEmpty(textFieldHKey.text)) {
-                    RedisUtils.hdel(textFieldKey.text, textFieldHKey.text)
-                } else {
-                    RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+
+            confirmation("", "Are you sure to delete this item ?") {
+                if (it == ButtonType.OK) {
+
+                    try {
+                        if (!StringUtils.isEmpty(textFieldHKey.text)) {
+                            RedisUtils.hdel(textFieldKey.text, textFieldHKey.text)
+                        } else {
+                            RedisUtils.delete(textFieldKey.text)
+                        }
+                        information("", "Success!")
+                    } catch (e: Exception) {
+                        error("", "Error:" + e.message)
+                    }
                 }
-                information("", "Success!")
-            } catch (e: Exception) {
-                error("", "Error:" + e.message)
             }
 
+        }
+    }
+
+    private fun initRedis() {
+
+        val redisConfig: RedisConfig? = getSelectedRedisConfig()
+
+        if (redisConfig != null) {
+            RedisUtils.config(redisConfig.host!!, redisConfig.port!!, redisConfig.auth!!)
+            RedisUtils.testConnection()
         }
     }
 
@@ -226,14 +255,8 @@ class MainView : View() {
      * load db list to comboChooseDatabase
      */
     private fun loadDbList() {
-        comboChooseDatabase.items = null
-        val redisConfig: RedisConfig? = getSelectedRedisConfig()
-
-        if (redisConfig != null) {
-            RedisUtils.config(redisConfig.host!!, redisConfig.port!!, redisConfig.auth!!)
-            val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
-            comboChooseDatabase.items = dbList
-        }
+        val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
+        comboChooseDatabase.items = dbList
     }
 
     private fun getSelectedRedisConfig(): RedisConfig? {

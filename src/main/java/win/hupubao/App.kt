@@ -1,6 +1,5 @@
 package win.hupubao
 
-import javafx.stage.Stage
 import tornadofx.App
 import win.hupubao.views.MainView
 

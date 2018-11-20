@@ -48,20 +48,8 @@ object RedisUtils {
      */
     private val jedis: Jedis
         get() {
-            var jedis: Jedis? = null
-            try {
-                jedis = jedisPool!!.resource
-                jedis.select(DB)
-            } catch (e: Exception) {
-                if (e.cause is JedisDataException) {
-
-                    error("Jedis 连接配置错误，请检查redis.properties文件。异常信息：" + e.message)
-                }
-                if (e.cause is JedisConnectionException) {
-                    throw JedisConnectionException("Redis可能未启动。异常信息：" + e.message)
-                }
-            }
-
+            val jedis: Jedis? = jedisPool!!.resource
+            jedis!!.select(DB)
             return jedis!!
         }
 
