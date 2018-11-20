@@ -12,7 +12,7 @@ Button:hover {
 }
 
 Button:pressed {
-    -fx-background-color: #ff9e8f;
+    -fx-background-color: #ff8679;
 }
 
 TextField, PasswordField {
@@ -43,6 +43,18 @@ ComboBox {
 
 .btn-success:pressed {
     -fx-background-color: #3ee849;
+}
+
+.btn-info {
+    -fx-background-color: #54c8d8;
+}
+
+.btn-info:hover {
+    -fx-background-color: #5ad7e8;
+}
+
+.btn-info:pressed {
+    -fx-background-color: #7594d8;
 }
 
 Label {

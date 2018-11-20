@@ -18,14 +18,14 @@ import win.hupubao.enums.ValueFormat
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
+import java.lang.Exception
 
 class MainView : View() {
     override val root: BorderPane by fxml("/views/MainView.fxml")
 
-    val btnCreateOrEdit: Button by fxid()
+    val btnCreateOrEditRedisConfig: Button by fxid()
     val comboConfig: ComboBox<RedisConfig> by fxid()
     val comboChooseDatabase: ComboBox<RedisDB> by fxid()
-    val comboOptKey: ComboBox<Operation> by fxid()
     val listViewKeys: ListView<String> by fxid()
     val textFieldPattern: TextField by fxid()
     val textFieldKey: TextField by fxid()
@@ -33,6 +33,8 @@ class MainView : View() {
     val comboDataFormat: ComboBox<String> by fxid()
     val textFieldHKey: TextField by fxid()
 
+    val btnCreateOrUpdate: Button by fxid()
+    val btnDelete: Button by fxid()
 
     init {
         title = "Jmedis"
@@ -109,8 +111,42 @@ class MainView : View() {
             }
         }
 
-        comboOptKey.items = FXCollections.observableArrayList(Operation.values().toList())
+        // action on create or update button
+        btnCreateOrUpdate.onAction = EventHandler {
 
+            if (getSelectedDatabase() == null) {
+                return@EventHandler
+            }
+            try {
+                if (StringUtils.isEmpty(textFieldHKey.text)) {
+                    RedisUtils[textFieldKey.text] = textAreaValue.text
+                } else {
+                    RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+                }
+                information("", "Success!")
+            } catch (e: Exception) {
+                error("", "Error:" + e.message)
+            }
+
+        }
+
+        // action on delete button
+        btnDelete.onAction = EventHandler {
+            if (getSelectedDatabase() == null) {
+                return@EventHandler
+            }
+            try {
+                if (StringUtils.isEmpty(textFieldHKey.text)) {
+                    RedisUtils.() = textAreaValue.text
+                } else {
+                    RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+                }
+                information("", "Success!")
+            } catch (e: Exception) {
+                error("", "Error:" + e.message)
+            }
+
+        }
     }
 
     /**
@@ -209,9 +245,9 @@ class MainView : View() {
 
         val redisConfig: RedisConfig? = getSelectedRedisConfig()
         if (redisConfig != null) {
-            btnCreateOrEdit.text = "Edit"
+            btnCreateOrEditRedisConfig.text = "Edit"
         } else {
-            btnCreateOrEdit.text = "Create"
+            btnCreateOrEditRedisConfig.text = "Create"
         }
     }
 
