@@ -13,18 +13,19 @@ import redis.clients.jedis.exceptions.JedisDataException
 import tornadofx.*
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
+import win.hupubao.enums.Operation
 import win.hupubao.enums.ValueFormat
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
 
 class MainView : View() {
-    override val root : BorderPane by fxml("/views/MainView.fxml")
+    override val root: BorderPane by fxml("/views/MainView.fxml")
 
     val btnCreateOrEdit: Button by fxid()
     val comboConfig: ComboBox<RedisConfig> by fxid()
     val comboChooseDatabase: ComboBox<RedisDB> by fxid()
-    val comboOptKey: ComboBox<String> by fxid()
+    val comboOptKey: ComboBox<Operation> by fxid()
     val listViewKeys: ListView<String> by fxid()
     val textFieldPattern: TextField by fxid()
     val textFieldKey: TextField by fxid()
@@ -39,11 +40,11 @@ class MainView : View() {
 
 
         loadComboRedisConfig(null)
-        setbtnCreateOrEditText()
+        setBtnCreateOrEditText()
         // on select redis configuration
         comboConfig.onAction = EventHandler {
             // change "create or edit button" text
-            setbtnCreateOrEditText()
+            setBtnCreateOrEditText()
             // load db list
             loadDbList()
             // reset key/pattern textfield text
@@ -59,7 +60,7 @@ class MainView : View() {
             if (redisDB != null) {
                 RedisUtils.selectDB(redisDB.index!!)
 
-                // make key/pattern textfield change
+                // get all keys
                 if (StringUtils.isEmpty(textFieldPattern.text)) {
                     textFieldPattern.text = "*"
                 }
@@ -67,8 +68,7 @@ class MainView : View() {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                loadValuetoTextField(textFieldKey.text)
-
+                loadValueToTextField(textFieldKey.text)
             }
         }
 
@@ -87,7 +87,7 @@ class MainView : View() {
         // on select key listView
         listViewKeys.onUserSelect(1) {
             textFieldKey.text = it
-            loadValuetoTextField(it)
+            loadValueToTextField(it)
         }
 
         // on change value format combo
@@ -98,25 +98,50 @@ class MainView : View() {
         // on key textfield typed in Enter
         textFieldKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadValuetoTextField(textFieldKey.text)
+                loadValueToTextField(textFieldKey.text)
             }
         }
 
-        val optList = FXCollections.observableArrayList("Update", "Delete")
-        comboOptKey.items = optList
+        // on field textfield typed in Enter
+        textFieldHKey.onKeyReleased = EventHandler {
+            if (it.code == KeyCode.ENTER) {
+                loadValueToTextField(textFieldKey.text, textFieldHKey.text)
+            }
+        }
+
+        comboOptKey.items = FXCollections.observableArrayList(Operation.values().toList())
+
     }
 
-    private fun loadValuetoTextField(key: String?) {
+    /**
+     * load value to textfield by get
+     */
+    private fun loadValueToTextField(key: String) {
         if (StringUtils.isEmpty(key)) {
             return
         }
         val text: String? = try {
-            RedisUtils[key!!]
+            RedisUtils[key]
         } catch (e: JedisDataException) {
             // hash
-            JSON.toJSONString(RedisUtils.hvals(key!!), SerializerFeature.BrowserSecure)
+            JSON.toJSONString(RedisUtils.hvals(key), SerializerFeature.BrowserSecure)
         }
 
+        textAreaValue.text = formatValue(text)
+    }
+
+    /**
+     * load value to textfield by hget
+     */
+    private fun loadValueToTextField(key: String, field: String) {
+        if (StringUtils.isEmpty(key)) {
+            return
+        }
+
+        if (StringUtils.isEmpty(field)) {
+            return loadValueToTextField(key)
+        }
+        val text: String? = RedisUtils.hget(key, field)
         textAreaValue.text = formatValue(text)
     }
 
@@ -125,17 +150,23 @@ class MainView : View() {
         if (value == null) {
             return ""
         }
-        return when(getValueFormat()) {
+        return when (getValueFormat()) {
             ValueFormat.Json -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
             ValueFormat.Text -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value)) else value
         }
     }
 
+    /**
+     * get selected value format enum
+     */
     private fun getValueFormat(): ValueFormat {
         val valueFormatStr = if (comboDataFormat.selectedItem != null) comboDataFormat.selectedItem as String else ValueFormat.Json.name
         return ValueFormat.valueOf(valueFormatStr)
     }
 
+    /**
+     * get keys by pattern/key and render to ViewList
+     */
     private fun loadKeyListToViewList() {
         listViewKeys.items = null
 
@@ -174,7 +205,7 @@ class MainView : View() {
         return if (config?.id == null) null else config
     }
 
-    private fun setbtnCreateOrEditText() {
+    private fun setBtnCreateOrEditText() {
 
         val redisConfig: RedisConfig? = getSelectedRedisConfig()
         if (redisConfig != null) {

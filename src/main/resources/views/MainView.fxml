@@ -16,6 +16,7 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.ButtonBar?>
 <BorderPane prefWidth="960" prefHeight="580" xmlns="http://javafx.com/javafx/8.0.172-ea"
             xmlns:fx="http://javafx.com/fxml/1">
     <VBox>
