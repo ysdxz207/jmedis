@@ -130,17 +130,39 @@ class MainView : View() {
             if (getSelectedDatabase() == null) {
                 return@EventHandler
             }
-            try {
-                if (StringUtils.isEmpty(textFieldHKey.text)) {
-                    RedisUtils[textFieldKey.text] = textAreaValue.text
-                } else {
-                    RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+
+            val hash: Boolean = !StringUtils.isEmpty(textFieldHKey.text)
+
+            var confirmationText = "Set confirmation."
+
+            if (!hash) {
+
+                val hasHash: Boolean = try {
+                    RedisUtils.hkeys(textFieldKey.text)
+                    true
+                } catch (e: Exception) {
+                    false
                 }
-                information("", "Success!")
-            } catch (e: Exception) {
-                error("", "Error:" + e.message)
+
+                if (hasHash) {
+                    confirmationText = "This key has a hash value. Do you want to overwrite it?"
+                }
             }
 
+            confirmation("", confirmationText) { confirmSet ->
+                if (confirmSet == ButtonType.OK) {
+                    try {
+                        if (!hash) {
+                            RedisUtils[textFieldKey.text] = textAreaValue.text
+                        } else {
+                            RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+                        }
+                        information("", "Success!")
+                    } catch (e: Exception) {
+                        error("", "Error:" + e.message)
+                    }
+                }
+            }
         }
 
         // action on delete button
@@ -149,8 +171,8 @@ class MainView : View() {
                 return@EventHandler
             }
 
-            confirmation("", "Are you sure to delete this item ?") {
-                if (it == ButtonType.OK) {
+            confirmation("", "Are you sure to delete this item ?") { confirmDel ->
+                if (confirmDel == ButtonType.OK) {
 
                     try {
                         if (!StringUtils.isEmpty(textFieldHKey.text)) {
