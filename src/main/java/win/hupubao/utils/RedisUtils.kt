@@ -211,6 +211,10 @@ object RedisUtils {
         return jedis.use { jedis -> jedis.hvals(key) }
     }
 
+    fun hgetAll(key: String): Map<String, String> {
+        return jedis.use { jedis -> jedis.hgetAll(key) }
+    }
+
     fun hdel(key: String, field: String): Long {
         return jedis.use { jedis -> jedis.hdel(key, field) }
     }

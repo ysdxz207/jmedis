@@ -21,14 +21,6 @@
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
 
-    <repositories>
-        <repository>
-            <!-- this repository has the JRE tgz -->
-            <id>alfresco</id>
-            <url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

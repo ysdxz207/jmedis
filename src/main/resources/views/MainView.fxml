@@ -22,8 +22,9 @@
             <Insets left="20" top="10"/>
         </padding>
         <HBox spacing="6" styleClass="header" minWidth="920" maxWidth="920" prefWidth="920">
-            <ComboBox fx:id="comboConfig" />
-            <Button fx:id="btnCreateOrEditRedisConfig" onAction="#showEditConfigDialog" text="Create or Edit" styleClass="btn-success"/>
+            <ComboBox fx:id="comboConfig"/>
+            <Button fx:id="btnCreateOrEditRedisConfig" onAction="#showEditConfigDialog" text="Create or Edit"
+                    styleClass="btn-success"/>
             <ComboBox fx:id="comboChooseDatabase" promptText="Choose Database"/>
             <Region HBox.hgrow="ALWAYS">
                 <opaqueInsets>
@@ -45,7 +46,7 @@
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <ListView fx:id="listViewKeys" minHeight="480" minWidth="300" />
+                    <ListView fx:id="listViewKeys" minHeight="480" minWidth="300"/>
                 </VBox>
             </VBox>
             <VBox>
@@ -53,8 +54,13 @@
                     <Insets left="8" top="10"/>
                 </padding>
                 <VBox>
+                    <TextField fx:id="textFieldKey" promptText="key"/>
+                </VBox>
+                <VBox>
+                    <padding>
+                        <Insets top="4"/>
+                    </padding>
                     <HBox spacing="4" HBox.hgrow="ALWAYS">
-                        <TextField fx:id="textFieldKey" prefWidth="10000" promptText="key"/>
                         <TextField fx:id="textFieldHKey" prefWidth="10000" promptText="field"/>
                         <ComboBox fx:id="comboDataFormat" value="Json" styleClass="combo-format">
                             <tooltip>
@@ -73,7 +79,7 @@
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <TextArea fx:id="textAreaValue" minHeight="480" minWidth="610"/>
+                    <TextArea fx:id="textAreaValue" minHeight="444" minWidth="610"/>
                 </VBox>
             </VBox>
         </HBox>

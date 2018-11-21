@@ -211,7 +211,7 @@ class MainView : View() {
             RedisUtils[key]
         } catch (e: JedisDataException) {
             // hash
-            JSON.toJSONString(RedisUtils.hvals(key), SerializerFeature.BrowserSecure)
+            JSON.toJSONString(RedisUtils.hgetAll(key), SerializerFeature.BrowserSecure)
         }
 
         textAreaValue.text = formatValue(text)
@@ -240,6 +240,7 @@ class MainView : View() {
         return when (getValueFormat()) {
             ValueFormat.Json -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
             ValueFormat.Text -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value)) else value
+            ValueFormat.JsonPlus -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
         }
     }
 

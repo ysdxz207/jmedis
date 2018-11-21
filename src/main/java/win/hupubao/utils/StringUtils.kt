@@ -3,7 +3,7 @@ package win.hupubao.utils
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
-import java.lang.Exception
+import com.alibaba.fastjson.serializer.SerializerFeature
 
 object StringUtils {
     fun isNumeric(input: String): Boolean =
@@ -32,6 +32,14 @@ object StringUtils {
         }
 
         return true
+    }
+
+    fun formatJson(value: String, deepFormat: Boolean): String {
+        return if (!deepFormat) {
+            if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
+        } else {
+            ""
+        }
     }
 
 }
