@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.serializer.SerializerFeature
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
+import javafx.geometry.Side
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
@@ -39,7 +40,6 @@ class MainView : View() {
     init {
         title = "Jmedis"
         currentStage?.isResizable = false
-
 
         loadComboRedisConfig(null)
         setBtnCreateOrEditText()
