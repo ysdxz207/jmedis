@@ -33,7 +33,7 @@ class MainView : View() {
     val comboDataFormat: ComboBox<String> by fxid()
     val textFieldHKey: TextField by fxid()
 
-    val btnCreateOrUpdate: Button by fxid()
+    val btnSet: Button by fxid()
     val btnDelete: Button by fxid()
 
     init {
@@ -124,8 +124,8 @@ class MainView : View() {
             }
         }
 
-        // action on create or update button
-        btnCreateOrUpdate.onAction = EventHandler {
+        // action on set button
+        btnSet.onAction = EventHandler {
 
             if (getSelectedDatabase() == null) {
                 return@EventHandler
