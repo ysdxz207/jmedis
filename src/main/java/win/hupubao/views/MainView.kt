@@ -22,10 +22,42 @@ import win.hupubao.utils.StringUtils
 import java.lang.Exception
 
 class MainView : View() {
-    override val root: BorderPane by fxml("/views/MainView.fxml")
+    override val root = borderpane {
+        val btnCreateOrEditRedisConfig = button("Create or Edit") {
+            action {
+                showEditConfigDialog()
+            }
+        }
 
-    val btnCreateOrEditRedisConfig: Button by fxid()
-    val comboConfig: ComboBox<RedisConfig> by fxid()
+        val comboConfig = combobox<RedisConfig> {
+            // on select redis configuration
+            onAction = EventHandler {
+                // reset key/pattern textfield text
+                textFieldPattern.text = ""
+                // reset key list
+                listViewKeys.items = null
+                // reset database list
+                comboChooseDatabase.items = null
+                // check redis configuration
+                if (getSelectedRedisConfig() == null) {
+                    return@EventHandler
+                }
+                try {
+                    initRedis()
+                } catch (e: Exception) {
+                    error("", "Redis connection failed,please check your redis configuration.")
+                    return@EventHandler
+                }
+                // change "create or edit button" text
+                setBtnCreateOrEditText()
+                // load db list
+                loadDbList()
+
+            }
+        }
+
+    }
+
     val comboChooseDatabase: ComboBox<RedisDB> by fxid()
     val listViewKeys: ListView<String> by fxid()
     val textFieldPattern: TextField by fxid()
@@ -43,30 +75,7 @@ class MainView : View() {
 
         loadComboRedisConfig(null)
         setBtnCreateOrEditText()
-        // on select redis configuration
-        comboConfig.onAction = EventHandler {
-            // reset key/pattern textfield text
-            textFieldPattern.text = ""
-            // reset key list
-            listViewKeys.items = null
-            // reset database list
-            comboChooseDatabase.items = null
-            // check redis configuration
-            if (getSelectedRedisConfig() == null) {
-                return@EventHandler
-            }
-            try {
-                initRedis()
-            } catch (e: Exception) {
-                error("", "Redis connection failed,please check your redis configuration.")
-                return@EventHandler
-            }
-            // change "create or edit button" text
-            setBtnCreateOrEditText()
-            // load db list
-            loadDbList()
 
-        }
 
         // on choose database
         comboChooseDatabase.onAction = EventHandler {
