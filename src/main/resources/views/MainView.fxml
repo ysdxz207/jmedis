@@ -82,11 +82,7 @@
                     <padding>
                         <Insets top="4"/>
                     </padding>
-                    <Drawer>
-                        <items>
-                            <TextArea fx:id="textAreaValue" minHeight="444" minWidth="610" prefWidth="610"/>
-                        </items>
-                    </Drawer>
+                    <TextArea fx:id="textAreaValue" minHeight="444" minWidth="610" prefWidth="610"/>
                 </VBox>
             </VBox>
         </HBox>
