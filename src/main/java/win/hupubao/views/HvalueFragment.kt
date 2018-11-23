@@ -76,7 +76,6 @@ class HvalueFragment : Fragment() {
                                         if (hvalue != null) {
                                             RedisUtils.hdel(mainView.textFieldKey.text, hvalue.key!!)
                                         }
-                                        information("", "Success!")
                                     } catch (e: Exception) {
                                         error("", "Error:" + e.message)
                                     }
@@ -97,7 +96,6 @@ class HvalueFragment : Fragment() {
                                         if (hvalue != null) {
                                             RedisUtils.hset(mainView.textFieldKey.text, textfieldHkey.text, textareaHvalue.text)
                                         }
-                                        information("", "Success!")
                                     } catch (e: Exception) {
                                         error("", "Error:" + e.message)
                                     }
