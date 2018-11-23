@@ -6,5 +6,6 @@ package win.hupubao.enums
 enum class FormatType {
     Json,
     Text,
-    JsonPlus
+    JsonPlus,
+    JsonPlusList
 }

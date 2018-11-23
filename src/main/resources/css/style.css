@@ -76,7 +76,9 @@ Label {
 }
 
 .combo-format {
-    -fx-min-width: 100px;
+    -fx-min-width: 140px;
+    -fx-pref-width: 140px;
+    -fx-max-width: 140px;
 }
 
 .textfiled-pattern {

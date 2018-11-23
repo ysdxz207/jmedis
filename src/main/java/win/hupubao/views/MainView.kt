@@ -1,7 +1,6 @@
 package win.hupubao.views
 
 import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.serializer.SerializerFeature
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Side
@@ -37,6 +36,8 @@ class MainView : View() {
     lateinit var tableViewValueList: TableView<RedisValue>
 
     val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
+    var isHash: Boolean = false
+    var redisValueText: String? = ""
 
 
     override val root = vbox {
@@ -100,7 +101,7 @@ class MainView : View() {
                         // on select key listView
                         onUserSelect(1) {
                             textFieldKey.text = it
-                            loadValueByKey(it)
+                            loadValue()
                         }
                     }
                 }
@@ -142,7 +143,7 @@ class MainView : View() {
                 vbox {
                     paddingTop = 4.0
 
-                    drawer(side = Side.RIGHT) {
+                    drawer(side = Side.RIGHT, multiselect = false) {
                         item(title = "Text", expanded = true) {
                             textAreaValue = textarea {
                                 minHeight = 444.0
@@ -150,6 +151,7 @@ class MainView : View() {
                                 prefWidth = 610.0
 
                             }
+
                         }
 
                         item("List") {
@@ -222,7 +224,7 @@ class MainView : View() {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                loadValueByKey(textFieldKey.text)
+                loadValue()
             }
         }
         // action on set button
@@ -281,20 +283,20 @@ class MainView : View() {
 
         // on change value format combo
         comboDataFormat.onAction = EventHandler {
-            textAreaValue.text = StringUtils.formatJson(textAreaValue.text, getFormatType())
+            textAreaValue.text = StringUtils.formatJson(redisValueText, isHash, getFormatType())
         }
 
         // on key textfield typed in Enter
         textFieldKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadValueByKey(textFieldKey.text)
+                loadValue()
             }
         }
 
         // on field textfield typed in Enter
         textFieldHKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadValueToTextField(textFieldKey.text, textFieldHKey.text)
+                loadValue()
             }
         }
 
@@ -337,16 +339,25 @@ class MainView : View() {
     /**
      * load value to textfield by get
      */
-    private fun loadValueByKey(key: String) {
+    private fun loadValue() {
+        val key = textFieldKey.text
         if (StringUtils.isEmpty(key)) {
             return
         }
 
         hvalueList.clear()
-        val text: String? = try {
-            RedisUtils[key]
-        } catch (e: JedisDataException) {
+
+
+        isHash = try {
+            RedisUtils.hkeys(textFieldKey.text)
+            true
+        } catch (e: Exception) {
+            false
+        }
+
+        val text: String? = if (isHash) {
             // hash
+            isHash = true
             val map = RedisUtils.hgetAll(key)
             // set tablevalue value list
             map.forEach {
@@ -355,32 +366,21 @@ class MainView : View() {
                 hvalue.value = it.value
                 hvalueList.add(hvalue)
             }
-
-
             JSON.toJSONString(map)
+        } else {
+            RedisUtils[key]
         }
 
         tableViewValueList.asyncItems {
             FXCollections.observableList(hvalueList)
         }
-        textAreaValue.text = StringUtils.formatJson(text, getFormatType())
+        redisValueText = StringUtils.formatJson(text, isHash, getFormatType())
+        textAreaValue.text = redisValueText
     }
 
     /**
      * load value to textfield by hget
      */
-    private fun loadValueToTextField(key: String, field: String) {
-        if (StringUtils.isEmpty(key)) {
-            return
-        }
-
-        if (StringUtils.isEmpty(field)) {
-            return loadValueByKey(key)
-        }
-        val text: String? = RedisUtils.hget(key, field)
-        textAreaValue.text = StringUtils.formatJson(text, getFormatType())
-    }
-
     /**
      * get selected value format enum
      */

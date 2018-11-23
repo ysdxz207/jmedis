@@ -42,7 +42,9 @@ class HvalueFragment : Fragment() {
 
                     tooltip("Data format.")
 
-                    items = FXCollections.observableList(FormatType.values().asList())
+                    items = FXCollections.observableList(FormatType.values().asList().filter {
+                        it != FormatType.JsonPlusList
+                    })
                 }
             }
         }
@@ -115,12 +117,17 @@ class HvalueFragment : Fragment() {
         comboboxFormat.onAction = EventHandler {
             formatHvalue()
         }
+
+        textfieldHkey.onAction = EventHandler {
+            textareaHvalue.text = RedisUtils.hget(mainView.textFieldKey.text, textfieldHkey.text)
+            formatHvalue()
+        }
     }
 
     fun formatHvalue() {
         if (hvalue != null && !StringUtils.isEmpty(hvalue.value)) {
             val valueFormat = if (comboboxFormat.selectedItem != null) comboboxFormat.selectedItem as FormatType else FormatType.Json
-            textareaHvalue.text = StringUtils.formatJson(hvalue.value, valueFormat)
+            textareaHvalue.text = StringUtils.formatJson(textareaHvalue.text, false, valueFormat)
         }
     }
 
