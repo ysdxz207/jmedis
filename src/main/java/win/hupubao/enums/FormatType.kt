@@ -3,7 +3,7 @@ package win.hupubao.enums
 /**
  *  value formats
  */
-enum class ValueFormat {
+enum class FormatType {
     Json,
     Text,
     JsonPlus

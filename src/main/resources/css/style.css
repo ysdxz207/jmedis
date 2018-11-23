@@ -78,3 +78,11 @@ Label {
 .combo-format {
     -fx-min-width: 100px;
 }
+
+.textfiled-pattern {
+    -fx-min-width: 300;
+}
+
+Drawer {
+    -fx-border-width: 0;
+}

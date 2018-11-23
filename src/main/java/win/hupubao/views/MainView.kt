@@ -7,76 +7,206 @@ import javafx.event.EventHandler
 import javafx.geometry.Side
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import redis.clients.jedis.exceptions.JedisDataException
 import tornadofx.*
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
-import win.hupubao.enums.Operation
-import win.hupubao.enums.ValueFormat
+import win.hupubao.beans.RedisValue
+import win.hupubao.enums.FormatType
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
-import java.lang.Exception
 
 class MainView : View() {
-    override val root = borderpane {
-        val btnCreateOrEditRedisConfig = button("Create or Edit") {
-            action {
-                showEditConfigDialog()
+
+
+    lateinit var comboConfig: ComboBox<RedisConfig>
+    lateinit var btnCreateOrEditRedisConfig: Button
+    lateinit var comboChooseDatabase: ComboBox<RedisDB>
+    lateinit var btnSet: Button
+    lateinit var btnDelete: Button
+    lateinit var textFieldPattern: TextField
+    lateinit var listViewKeys: ListView<String>
+    lateinit var textFieldKey: TextField
+    lateinit var textFieldHKey: TextField
+    lateinit var comboDataFormat: ComboBox<FormatType>
+    lateinit var textAreaValue: TextArea
+    lateinit var tableViewValueList: TableView<RedisValue>
+
+    val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
+
+
+    override val root = vbox {
+        prefWidth = 960.0
+        prefHeight = 580.0
+
+        paddingLeft = 20
+        paddingRight = 20
+        paddingTop = 10
+
+        hbox {
+            spacing = 6.0
+
+            comboConfig = combobox {
+
+            }
+
+
+            btnCreateOrEditRedisConfig = button("Create or Edit") {
+                addClass("btn-success")
+                action {
+                    showEditConfigDialog()
+                }
+            }
+
+
+            comboChooseDatabase = combobox {
+                promptText = "Choose Database"
+            }
+
+
+            region {
+                hgrow = Priority.ALWAYS
+                opaqueInsets
+            }
+
+            btnSet = button("Set") {
+
+                addClass("btn-info")
+            }
+
+            btnDelete = button("Delete") {
             }
         }
 
-        val comboConfig = combobox<RedisConfig> {
-            // on select redis configuration
-            onAction = EventHandler {
-                // reset key/pattern textfield text
-                textFieldPattern.text = ""
-                // reset key list
-                listViewKeys.items = null
-                // reset database list
-                comboChooseDatabase.items = null
-                // check redis configuration
-                if (getSelectedRedisConfig() == null) {
-                    return@EventHandler
-                }
-                try {
-                    initRedis()
-                } catch (e: Exception) {
-                    error("", "Redis connection failed,please check your redis configuration.")
-                    return@EventHandler
-                }
-                // change "create or edit button" text
-                setBtnCreateOrEditText()
-                // load db list
-                loadDbList()
+        hbox {
+            vbox {
+                paddingTop = 10.0
+                vbox {
+                    textFieldPattern = textfield {
+                        promptText = "key/pattern"
 
+                        addClass("textfiled-pattern")
+                    }
+                }
+
+                vbox {
+                    paddingTop = 4.0
+                    listViewKeys = listview {
+                        minHeight = 444.0 + 32.0 + 4.0
+                        // on select key listView
+                        onUserSelect(1) {
+                            textFieldKey.text = it
+                            loadValueByKey(it)
+                        }
+                    }
+                }
             }
-        }
 
+            vbox {
+                paddingLeft = 8.0
+                paddingTop = 10.0
+
+                vbox {
+                    textFieldKey = textfield {
+                        promptText = "key"
+                    }
+                }
+
+                vbox {
+                    paddingTop = 4.0
+
+                    hbox {
+                        spacing = 4.0
+                        hgrow = Priority.ALWAYS
+
+                        textFieldHKey = textfield {
+                            promptText = "field"
+                            prefWidth = 10000.0
+                        }
+
+                        comboDataFormat = combobox {
+                            value = FormatType.Json
+                            addClass("combo-format")
+
+                            tooltip("Data format.")
+
+                            items = FXCollections.observableList(FormatType.values().asList())
+                        }
+                    }
+                }
+
+                vbox {
+                    paddingTop = 4.0
+
+                    drawer(side = Side.RIGHT) {
+                        item(title = "Text", expanded = true) {
+                            textAreaValue = textarea {
+                                minHeight = 444.0
+                                minWidth = 610.0
+                                prefWidth = 610.0
+
+                            }
+                        }
+
+                        item("List") {
+                            tableViewValueList = tableview {
+                                column("field", RedisValue::key)
+                                column("value", RedisValue::value).pctWidth(60.0)
+                                columnResizePolicy = SmartResize.POLICY
+
+                                onUserSelect {
+                                    find<HvalueFragment>().openWindow(stageStyle = StageStyle.UTILITY, modality = Modality.WINDOW_MODAL, resizable = false)
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+
+        }
     }
 
-    val comboChooseDatabase: ComboBox<RedisDB> by fxid()
-    val listViewKeys: ListView<String> by fxid()
-    val textFieldPattern: TextField by fxid()
-    val textFieldKey: TextField by fxid()
-    val textAreaValue: TextArea by fxid()
-    val comboDataFormat: ComboBox<String> by fxid()
-    val textFieldHKey: TextField by fxid()
-
-    val btnSet: Button by fxid()
-    val btnDelete: Button by fxid()
 
     init {
         title = "Jmedis"
         currentStage?.isResizable = false
 
+        importStylesheet("/css/style.css")
+
+
         loadComboRedisConfig(null)
         setBtnCreateOrEditText()
 
+        // on select redis configuration
+        comboConfig.onAction = EventHandler {
+            // reset key/pattern textfield text
+            textFieldPattern.text = ""
+            // reset key list
+            listViewKeys.items = null
+            // reset database list
+            comboChooseDatabase.items = null
+            // check redis configuration
+            if (getSelectedRedisConfig() == null) {
+                return@EventHandler
+            }
+            try {
+                initRedis()
+            } catch (e: Exception) {
+                error("", "Redis connection failed,please check your redis configuration.")
+                return@EventHandler
+            }
+            // change "create or edit button" text
+            setBtnCreateOrEditText()
+            // load db list
+            loadDbList()
 
+        }
         // on choose database
         comboChooseDatabase.onAction = EventHandler {
             // get selected database
@@ -92,47 +222,9 @@ class MainView : View() {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                loadValueToTextField(textFieldKey.text)
+                loadValueByKey(textFieldKey.text)
             }
         }
-
-        // on key/pattern textfield text change
-        textFieldPattern.textProperty().onChange {
-            loadKeyListToViewList()
-        }
-
-        // on key/pattern textfield typed in Enter
-        textFieldPattern.onKeyReleased = EventHandler {
-            if (it.code == KeyCode.ENTER) {
-                loadKeyListToViewList()
-            }
-        }
-
-        // on select key listView
-        listViewKeys.onUserSelect(1) {
-            textFieldKey.text = it
-            loadValueToTextField(it)
-        }
-
-        // on change value format combo
-        comboDataFormat.onAction = EventHandler {
-            textAreaValue.text = formatValue(textAreaValue.text)
-        }
-
-        // on key textfield typed in Enter
-        textFieldKey.onKeyReleased = EventHandler {
-            if (it.code == KeyCode.ENTER) {
-                loadValueToTextField(textFieldKey.text)
-            }
-        }
-
-        // on field textfield typed in Enter
-        textFieldHKey.onKeyReleased = EventHandler {
-            if (it.code == KeyCode.ENTER) {
-                loadValueToTextField(textFieldKey.text, textFieldHKey.text)
-            }
-        }
-
         // action on set button
         btnSet.onAction = EventHandler {
 
@@ -174,6 +266,39 @@ class MainView : View() {
             }
         }
 
+        // on key/pattern textfield text change
+        textFieldPattern.textProperty().onChange {
+            loadKeyListToViewList()
+        }
+
+        // on key/pattern textfield typed in Enter
+        textFieldPattern.onKeyReleased = EventHandler {
+            if (it.code == KeyCode.ENTER) {
+                loadKeyListToViewList()
+            }
+        }
+
+
+        // on change value format combo
+        comboDataFormat.onAction = EventHandler {
+            textAreaValue.text = StringUtils.formatJson(textAreaValue.text, getFormatType())
+        }
+
+        // on key textfield typed in Enter
+        textFieldKey.onKeyReleased = EventHandler {
+            if (it.code == KeyCode.ENTER) {
+                loadValueByKey(textFieldKey.text)
+            }
+        }
+
+        // on field textfield typed in Enter
+        textFieldHKey.onKeyReleased = EventHandler {
+            if (it.code == KeyCode.ENTER) {
+                loadValueToTextField(textFieldKey.text, textFieldHKey.text)
+            }
+        }
+
+
         // action on delete button
         btnDelete.onAction = EventHandler {
             if (getSelectedDatabase() == null) {
@@ -212,18 +337,33 @@ class MainView : View() {
     /**
      * load value to textfield by get
      */
-    private fun loadValueToTextField(key: String) {
+    private fun loadValueByKey(key: String) {
         if (StringUtils.isEmpty(key)) {
             return
         }
+
+        hvalueList.clear()
         val text: String? = try {
             RedisUtils[key]
         } catch (e: JedisDataException) {
             // hash
-            JSON.toJSONString(RedisUtils.hgetAll(key), SerializerFeature.BrowserSecure)
+            val map = RedisUtils.hgetAll(key)
+            // set tablevalue value list
+            map.forEach {
+                val hvalue = RedisValue()
+                hvalue.key = it.key
+                hvalue.value = it.value
+                hvalueList.add(hvalue)
+            }
+
+
+            JSON.toJSONString(map)
         }
 
-        textAreaValue.text = formatValue(text)
+        tableViewValueList.asyncItems {
+            FXCollections.observableList(hvalueList)
+        }
+        textAreaValue.text = StringUtils.formatJson(text, getFormatType())
     }
 
     /**
@@ -235,30 +375,17 @@ class MainView : View() {
         }
 
         if (StringUtils.isEmpty(field)) {
-            return loadValueToTextField(key)
+            return loadValueByKey(key)
         }
         val text: String? = RedisUtils.hget(key, field)
-        textAreaValue.text = formatValue(text)
-    }
-
-    private fun formatValue(value: String?): String {
-
-        if (value == null) {
-            return ""
-        }
-        return when (getValueFormat()) {
-            ValueFormat.Json -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
-            ValueFormat.Text -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value)) else value
-            ValueFormat.JsonPlus -> if (StringUtils.isJson(value)) JSON.toJSONString(JSON.parse(value), SerializerFeature.PrettyFormat) else value
-        }
+        textAreaValue.text = StringUtils.formatJson(text, getFormatType())
     }
 
     /**
      * get selected value format enum
      */
-    private fun getValueFormat(): ValueFormat {
-        val valueFormatStr = if (comboDataFormat.selectedItem != null) comboDataFormat.selectedItem as String else ValueFormat.Json.name
-        return ValueFormat.valueOf(valueFormatStr)
+    private fun getFormatType(): FormatType {
+        return if (comboDataFormat.selectedItem != null) comboDataFormat.selectedItem as FormatType else FormatType.Json
     }
 
     /**
