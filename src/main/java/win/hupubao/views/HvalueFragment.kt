@@ -80,6 +80,8 @@ class HvalueFragment : Fragment() {
                                     } catch (e: Exception) {
                                         error("", "Error:" + e.message)
                                     }
+                                    closeDialog()
+                                    reloadTableViewList()
                                 }
                             }
                         }
@@ -99,6 +101,9 @@ class HvalueFragment : Fragment() {
                                     } catch (e: Exception) {
                                         error("", "Error:" + e.message)
                                     }
+
+                                    closeDialog()
+                                    reloadTableViewList()
                                 }
                             }
 
@@ -131,4 +136,11 @@ class HvalueFragment : Fragment() {
         }
     }
 
+    private fun closeDialog() {
+        close()
+    }
+
+    fun reloadTableViewList() {
+
+    }
 }
