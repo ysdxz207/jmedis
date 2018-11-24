@@ -5,9 +5,11 @@ import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Side
 import javafx.scene.control.*
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.stage.Modality
+import javafx.stage.Stage
 import javafx.stage.StageStyle
 import redis.clients.jedis.exceptions.JedisDataException
 import tornadofx.*
@@ -38,7 +40,6 @@ class MainView : View() {
     val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
     var isHash: Boolean = false
     var redisValueText: String? = ""
-
 
     override val root = vbox {
         prefWidth = 960.0
@@ -180,6 +181,7 @@ class MainView : View() {
         currentStage?.isResizable = false
 
         importStylesheet("/css/style.css")
+
 
 
         loadComboRedisConfig(null)
