@@ -1,8 +1,10 @@
 package win.hupubao.views
 
 import javafx.collections.FXCollections
+import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.control.*
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.Priority
 import tornadofx.*
 import win.hupubao.beans.RedisValue
@@ -139,6 +141,6 @@ class HvalueFragment : Fragment() {
     }
 
     fun reloadTableViewList() {
-
+        mainView.textFieldHKey.fireEvent(ActionEvent())
     }
 }

@@ -300,6 +300,10 @@ class MainView : View() {
             }
         }
 
+        textFieldHKey.onAction = EventHandler {
+            loadValue()
+        }
+
 
         // action on delete button
         btnDelete.onAction = EventHandler {
@@ -357,16 +361,20 @@ class MainView : View() {
 
         val text: String? = if (isHash) {
             // hash
-            isHash = true
-            val map = RedisUtils.hgetAll(key)
-            // set tablevalue value list
-            map.forEach {
-                val hvalue = RedisValue()
-                hvalue.key = it.key
-                hvalue.value = it.value
-                hvalueList.add(hvalue)
+            if (StringUtils.isEmpty(textFieldHKey.text)) {
+
+                val map = RedisUtils.hgetAll(key)
+                // set tablevalue value list
+                map.forEach {
+                    val hvalue = RedisValue()
+                    hvalue.key = it.key
+                    hvalue.value = it.value
+                    hvalueList.add(hvalue)
+                }
+                JSON.toJSONString(map)
+            } else {
+                RedisUtils.hget(key, textFieldHKey.text)
             }
-            JSON.toJSONString(map)
         } else {
             RedisUtils[key]
         }
