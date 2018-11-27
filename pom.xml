@@ -140,7 +140,7 @@
                             <jar>target/${project.artifactId}.jar</jar>
                             <outfile>target/${project.artifactId}.exe</outfile>
                             <errTitle>${project.name}</errTitle>
-                            <!--<icon>your/Icon.ico</icon>-->
+                            <icon>src/main/resources/icon/icon.ico</icon>
                             <jre>
                                 <path>./jre</path>
                                 <minVersion>${java.version}</minVersion>
