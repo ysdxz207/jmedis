@@ -18,7 +18,7 @@ import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
 
-class MainView : View() {
+class MainView : View("Jmedis") {
 
 
     lateinit var comboConfig: ComboBox<RedisConfig>
@@ -148,12 +148,17 @@ class MainView : View() {
                                 minWidth = 610.0
                                 prefWidth = 610.0
 
+                                addClass("textarea-value")
                             }
 
                         }
 
                         item("List") {
                             tableViewValueList = tableview {
+                                minHeight = 444.0
+                                minWidth = 610.0
+                                prefWidth = 610.0
+
                                 column("field", RedisValue::key).pctWidth(40.0)
                                 column("value", RedisValue::value).pctWidth(60.0)
                                 columnResizePolicy = SmartResize.POLICY
@@ -175,11 +180,9 @@ class MainView : View() {
 
 
     init {
-        title = "Jmedis"
         currentStage?.isResizable = false
 
         importStylesheet("/css/style.css")
-
 
 
         loadComboRedisConfig(null)

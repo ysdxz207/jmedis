@@ -139,3 +139,14 @@ Label {
     -fx-mark-color: white ;
 }
 
+
+.drawer, .drawer .drawer-item {
+    -fx-border-width: 0;
+}
+
+
+.textarea-value, .textarea-value .content {
+    -fx-border-width: 0;
+    -fx-border-radius: 0;
+    -fx-border-insets: 0;
+}
