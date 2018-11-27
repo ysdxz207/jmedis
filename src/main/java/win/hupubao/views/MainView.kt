@@ -157,7 +157,7 @@ class MainView : View() {
 
                         item("List") {
                             tableViewValueList = tableview {
-                                column("field", RedisValue::key)
+                                column("field", RedisValue::key).pctWidth(40.0)
                                 column("value", RedisValue::value).pctWidth(60.0)
                                 columnResizePolicy = SmartResize.POLICY
 
@@ -165,6 +165,7 @@ class MainView : View() {
                                     find<HvalueFragment>().openWindow(stageStyle = StageStyle.UTILITY, modality = Modality.WINDOW_MODAL, resizable = false)
                                 }
                             }
+
                         }
 
                     }
