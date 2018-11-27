@@ -99,7 +99,7 @@ class MainView : View() {
                         // on select key listView
                         onUserSelect(1) {
                             textFieldKey.text = it
-                            loadValue()
+                            loadRedisValue()
                         }
                     }
                 }
@@ -224,7 +224,7 @@ class MainView : View() {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                loadValue()
+                loadRedisValue()
             }
         }
         // action on set button
@@ -289,21 +289,16 @@ class MainView : View() {
         // on key textfield typed in Enter
         textFieldKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadValue()
+                loadRedisValue()
             }
         }
 
         // on field textfield typed in Enter
         textFieldHKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadValue()
+                loadRedisValue()
             }
         }
-
-        textFieldHKey.onAction = EventHandler {
-            loadValue()
-        }
-
 
         // action on delete button
         btnDelete.onAction = EventHandler {
@@ -343,7 +338,7 @@ class MainView : View() {
     /**
      * load value to textfield by get
      */
-    private fun loadValue() {
+    fun loadRedisValue() {
         val key = textFieldKey.text
         if (StringUtils.isEmpty(key)) {
             return
@@ -441,7 +436,7 @@ class MainView : View() {
         }
     }
 
-    fun showEditConfigDialog() {
+    private fun showEditConfigDialog() {
         find<EditConfigFragment>().openWindow(stageStyle = StageStyle.UTILITY, modality = Modality.WINDOW_MODAL, resizable = false)
     }
 

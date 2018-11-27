@@ -4,9 +4,6 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.serializer.SerializerFeature
 import org.apache.commons.io.FileUtils
 import win.hupubao.beans.Config
-import win.hupubao.beans.RedisConfig
-import win.hupubao.listener.ConfigEventListener
-import win.hupubao.listener.impl.ConfigEventListenerImpl
 import java.io.File
 import java.io.IOException
 
@@ -20,17 +17,11 @@ object ConfigUtils {
     private val CONFIG_FILE_NAME = System.getProperty("user.home") + "/.jmedis/conf.json"
     private val CONFIG_FILE: File
     private val ENCODING = "UTF-8"
-    private val listener: ConfigEventListener = ConfigEventListenerImpl()
     /**
      * 缓存
      */
     private var CONFIG: Config? = null
 
-
-    fun fireChanged(): Boolean {
-        listener.changed()
-        return true
-    }
 
     init {
         CONFIG_FILE = File(CONFIG_FILE_NAME)
@@ -85,17 +76,6 @@ object ConfigUtils {
             e.printStackTrace()
             error("Config error.")
         }
-    }
-
-    fun getRedisConfigById(id: Long): RedisConfig? {
-        val config = get()
-        for (redisConfig in config.redisConfigList) {
-            if (id == redisConfig.id) {
-                return redisConfig
-            }
-        }
-
-        return null
     }
 
     fun deleteRedisConfigById(id: Long) {

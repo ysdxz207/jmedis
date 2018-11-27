@@ -1,10 +1,11 @@
 package win.hupubao.views
 
 import javafx.collections.FXCollections
-import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.control.*
-import javafx.scene.input.KeyEvent
+import javafx.scene.control.ButtonType
+import javafx.scene.control.ComboBox
+import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.scene.layout.Priority
 import tornadofx.*
 import win.hupubao.beans.RedisValue
@@ -82,7 +83,7 @@ class HvalueFragment : Fragment() {
                                         error("", "Error:" + e.message)
                                     }
                                     closeDialog()
-                                    reloadTableViewList()
+                                    mainView.loadRedisValue()
                                 }
                             }
                         }
@@ -103,7 +104,7 @@ class HvalueFragment : Fragment() {
                                     }
 
                                     closeDialog()
-                                    reloadTableViewList()
+                                    mainView.loadRedisValue()
                                 }
                             }
 
@@ -140,7 +141,4 @@ class HvalueFragment : Fragment() {
         close()
     }
 
-    fun reloadTableViewList() {
-        mainView.textFieldHKey.fireEvent(ActionEvent())
-    }
 }

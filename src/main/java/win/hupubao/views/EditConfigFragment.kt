@@ -136,7 +136,7 @@ class EditConfigFragment : Fragment() {
         }
     }
 
-    fun editConfig() {
+    private fun editConfig() {
         if (StringUtils.isEmpty(host.text)) {
             alert(Alert.AlertType.ERROR, "", "Please enter host.")
             return
@@ -172,7 +172,6 @@ class EditConfigFragment : Fragment() {
         config.redisConfigList.add(redisConfig)
 
         ConfigUtils.save(config)
-        ConfigUtils.fireChanged()
 
         mainView.loadComboRedisConfig(redisConfig)
 
@@ -182,13 +181,12 @@ class EditConfigFragment : Fragment() {
         close()
     }
 
-    fun deleteConfig() {
+    private fun deleteConfig() {
         confirmation("", "Are you sure to delete this config ?") {
             if (it == ButtonType.OK && mainView.comboConfig.selectedItem != null) {
                 closeDialog()
                 val redisConfig: RedisConfig = mainView.comboConfig.selectedItem as RedisConfig
                 ConfigUtils.deleteRedisConfigById(redisConfig.id!!)
-                ConfigUtils.fireChanged()
                 mainView.loadComboRedisConfig(null)
             }
         }
