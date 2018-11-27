@@ -5,13 +5,10 @@ import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Side
 import javafx.scene.control.*
-import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.Priority
 import javafx.stage.Modality
-import javafx.stage.Stage
 import javafx.stage.StageStyle
-import redis.clients.jedis.exceptions.JedisDataException
 import tornadofx.*
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB

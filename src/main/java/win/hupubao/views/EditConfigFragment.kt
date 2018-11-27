@@ -1,29 +1,118 @@
 package win.hupubao.views
 
-import com.alibaba.fastjson.JSON
 import javafx.scene.control.*
-import javafx.scene.layout.BorderPane
 import tornadofx.*
 import win.hupubao.beans.RedisConfig
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.StringUtils
 
 class EditConfigFragment : Fragment() {
-    override val root: BorderPane by fxml("/views/ConfigDialog.fxml")
-
-
     private val mainView: MainView by inject()
 
-    private val labelTitle: Label by fxid()
+    lateinit var labelTitle: Label
 
-    private val alias: TextField by fxid()
-    private val host: TextField by fxid()
-    private val port: TextField by fxid()
-    private val auth: TextField by fxid()
+    lateinit var alias: TextField
+    lateinit var host: TextField
+    lateinit var port: TextField
+    lateinit var auth: TextField
 
-    private val btnDelete: Button by fxid()
+    lateinit var btnDelete: Button
 
     private var id: Long? = null
+
+
+    override val root = vbox {
+        
+        prefHeight = 240.0
+        prefWidth = 400.0
+        
+        
+        vbox {
+            minWidth = 380.0
+            addClass("config-dialog")
+            
+            paddingBottom = 10.0
+            paddingRight = 10.0
+            
+            hbox {
+                paddingBottom = 10.0
+                paddingLeft = 10.0
+                paddingTop = 8.0
+                
+                labelTitle = label {
+                    addClass("title")
+                }
+            }
+
+            hbox {
+                paddingBottom = 10.0
+                paddingLeft = 10.0
+
+                label("alias")
+                alias = textfield {
+
+                }
+            }
+
+            hbox {
+                paddingBottom = 10.0
+                paddingLeft = 10.0
+
+                label("host")
+                host = textfield {
+
+                }
+            }
+
+            hbox {
+                paddingBottom = 10.0
+                paddingLeft = 10.0
+
+                label("port")
+                port = textfield {
+
+                }
+            }
+
+            hbox {
+                paddingBottom = 10.0
+                paddingLeft = 10.0
+
+                label("auth")
+                auth = textfield {
+
+                    promptText = "Keep empty without auth."
+                }
+            }
+
+            hbox {
+                buttonbar {
+                    minWidth = 380.0
+                    paddingBottom = 10.0
+                    paddingLeft = 10.0
+
+                    btnDelete = button("Delete") {
+                        ButtonBar.setButtonData(this, ButtonBar.ButtonData.LEFT)
+
+                        action {
+                            deleteConfig()
+                        }
+                    }
+
+                    button("Save") {
+                        ButtonBar.setButtonData(this, ButtonBar.ButtonData.RIGHT)
+                        addClass("btn-success")
+
+                        action {
+                            editConfig()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
 
     init {
         currentStage?.isResizable = false
