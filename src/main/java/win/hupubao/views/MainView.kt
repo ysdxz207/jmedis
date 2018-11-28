@@ -1,6 +1,8 @@
 package win.hupubao.views
 
 import com.alibaba.fastjson.JSON
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Side
@@ -10,6 +12,7 @@ import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import tornadofx.*
+import tornadofx.FX.Companion.icon
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
 import win.hupubao.beans.RedisValue
@@ -17,6 +20,11 @@ import win.hupubao.enums.FormatType
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
+import java.net.URISyntaxException
+import java.io.IOException
+import java.awt.Desktop
+import java.net.URI
+
 
 class MainView : View("Jmedis") {
 
@@ -45,6 +53,8 @@ class MainView : View("Jmedis") {
         paddingLeft = 20
         paddingRight = 20
         paddingTop = 10
+
+
 
         hbox {
             spacing = 6.0
@@ -165,6 +175,23 @@ class MainView : View("Jmedis") {
 
                                 onUserSelect {
                                     find<HvalueFragment>().openWindow(stageStyle = StageStyle.UTILITY, modality = Modality.WINDOW_MODAL, resizable = false)
+                                }
+                            }
+
+                        }
+
+                        item(title = "About", expanded = false) {
+
+                            hyperlink(text = "Github", graphic = FontAwesomeIconView(FontAwesomeIcon.GITHUB).apply { glyphSize = 20 }).action {
+                                if (Desktop.isDesktopSupported()) {
+                                    try {
+                                        Desktop.getDesktop().browse(URI("https://github.com/ysdxz207/jmedis"))
+                                    } catch (e1: IOException) {
+                                        e1.printStackTrace()
+                                    } catch (e1: URISyntaxException) {
+                                        e1.printStackTrace()
+                                    }
+
                                 }
                             }
 

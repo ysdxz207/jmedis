@@ -139,11 +139,15 @@ Label {
     -fx-mark-color: white ;
 }
 
-
-.drawer, .drawer .drawer-item {
-    -fx-border-width: 0;
+.table-view {
+    -fx-border-width: 1;
+    -fx-border-color: darkgrey;
 }
 
+.drawer, .drawer>*, .drawer>.content-area {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
 
 .textarea-value, .textarea-value .content {
     -fx-border-width: 0;
