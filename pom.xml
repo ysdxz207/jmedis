@@ -108,7 +108,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>${project.artifactId}</finalName>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
@@ -144,8 +144,8 @@
 
                             <headerType>gui</headerType>
                             <!--<headerType>console</headerType>-->
-                            <jar>target/${project.artifactId}.jar</jar>
-                            <outfile>target/${project.artifactId}.exe</outfile>
+                            <jar>target/${project.artifactId}-${project.version}.jar</jar>
+                            <outfile>target/${project.artifactId}-${project.version}.exe</outfile>
                             <errTitle>${project.name}</errTitle>
                             <icon>src/main/resources/icon/icon.ico</icon>
                             <jre>
