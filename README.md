@@ -2,7 +2,9 @@
 
 A crossplatform redis management tool written in kotlin + [tornadofx](https://github.com/edvin/tornadofx).
 
-To run jmedis need java environment = JDK1.8.
+- Redis client is jedis-2.9.0.
+
+- To run jmedis need java environment = JDK1.8.
 Of course, you can also copy the jre directory of jdk8 to the same directory as jmedis.
 
 ## Run on Mac
