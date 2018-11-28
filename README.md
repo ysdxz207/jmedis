@@ -15,7 +15,7 @@ Download [here](https://github.com/ysdxz207/jmedis/releases)
 
 ## Tutorial
 
-[](Tutorial.gif)
+![Tutorial](https://github.com/ysdxz207/jmedis/blob/master/Tutorial.gif)
 ## LICENCE
 [MIT](https://github.com/ysdxz207/jmedis/blob/master/LICENSE)
 
