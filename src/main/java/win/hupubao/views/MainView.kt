@@ -12,7 +12,6 @@ import javafx.scene.layout.Priority
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import tornadofx.*
-import tornadofx.FX.Companion.icon
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
 import win.hupubao.beans.RedisValue
@@ -227,9 +226,7 @@ class MainView : View("Jmedis") {
             if (getSelectedRedisConfig() == null) {
                 return@EventHandler
             }
-            try {
-                initRedis()
-            } catch (e: Exception) {
+            if (!checkAndConfigRedis()) {
                 error("", "Redis connection failed,please check your redis configuration.")
                 return@EventHandler
             }
@@ -355,14 +352,21 @@ class MainView : View("Jmedis") {
         }
     }
 
-    private fun initRedis() {
+    private fun checkAndConfigRedis() : Boolean {
 
         val redisConfig: RedisConfig? = getSelectedRedisConfig()
 
         if (redisConfig != null) {
             RedisUtils.config(redisConfig.host!!, redisConfig.port!!, redisConfig.auth!!)
-            RedisUtils.testConnection()
+            return try {
+                RedisUtils.testConnection()
+                true
+            } catch (e: Exception) {
+                false
+            }
         }
+
+        return false
     }
 
     /**
@@ -371,6 +375,11 @@ class MainView : View("Jmedis") {
     fun loadRedisValue() {
         val key = textFieldKey.text
         if (StringUtils.isEmpty(key)) {
+            return
+        }
+
+        if (!checkAndConfigRedis()) {
+            error("", "Redis connection failed,please check your redis configuration.")
             return
         }
 
@@ -389,14 +398,18 @@ class MainView : View("Jmedis") {
             if (StringUtils.isEmpty(textFieldHKey.text)) {
 
                 val map = RedisUtils.hgetAll(key)
-                // set tablevalue value list
-                map.forEach {
-                    val hvalue = RedisValue()
-                    hvalue.key = it.key
-                    hvalue.value = it.value
-                    hvalueList.add(hvalue)
+                if (!map.isEmpty()) {
+                    // set tablevalue value list
+                    map.forEach {
+                        val hvalue = RedisValue()
+                        hvalue.key = it.key
+                        hvalue.value = it.value
+                        hvalueList.add(hvalue)
+                    }
+                    JSON.toJSONString(map)
+                } else {
+                    ""
                 }
-                JSON.toJSONString(map)
             } else {
                 RedisUtils.hget(key, textFieldHKey.text)
             }
