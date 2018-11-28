@@ -13,6 +13,9 @@ and run jar file.
 ## Run on Windows
 Download [here](https://github.com/ysdxz207/jmedis/releases)
 
+## Tutorial
+
+[](Tutorial.gif)
 ## LICENCE
 [MIT](https://github.com/ysdxz207/jmedis/blob/master/LICENSE)
 
