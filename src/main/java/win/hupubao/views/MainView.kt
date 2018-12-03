@@ -443,7 +443,7 @@ class MainView : View("Jmedis") {
         if (!StringUtils.isEmpty(textFieldPattern.text)
                 && getSelectedRedisConfig() != null
                 && getSelectedDatabase() != null) {
-            // get keys by kes or pattern
+            // get keys by key or pattern
             val keysList = FXCollections.observableArrayList(RedisUtils.keys(textFieldPattern.text))
             listViewKeys.items = keysList
         }
