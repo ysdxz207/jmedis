@@ -245,7 +245,7 @@ class MainView : View("Jmedis") {
 
                 // get all keys
                 if (StringUtils.isEmpty(textFieldPattern.text)) {
-                    textFieldPattern.text = "*"
+//                    textFieldPattern.text = "*"
                 }
 
                 // reload keys
@@ -297,7 +297,7 @@ class MainView : View("Jmedis") {
 
         // on key/pattern textfield text change
         textFieldPattern.textProperty().onChange {
-            loadKeyListToViewList()
+//            loadKeyListToViewList()
         }
 
         // on key/pattern textfield typed in Enter
@@ -438,14 +438,14 @@ class MainView : View("Jmedis") {
      * get keys by pattern/key and render to ViewList
      */
     private fun loadKeyListToViewList() {
-        listViewKeys.items = null
-
         if (!StringUtils.isEmpty(textFieldPattern.text)
                 && getSelectedRedisConfig() != null
                 && getSelectedDatabase() != null) {
-            // get keys by key or pattern
-            val keysList = FXCollections.observableArrayList(RedisUtils.keys(textFieldPattern.text))
-            listViewKeys.items = keysList
+            listViewKeys.asyncItems {
+
+                // get keys by key or pattern
+                FXCollections.observableArrayList(RedisUtils.keys(textFieldPattern.text))
+            }
         }
     }
 
