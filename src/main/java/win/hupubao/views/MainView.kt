@@ -222,16 +222,14 @@ class MainView : View("Jmedis") {
             listViewKeys.items = null
             // reset database list
             comboChooseDatabase.items = null
+            // change "create or edit button" text
+            setBtnCreateOrEditText()
             // check redis configuration
             if (getSelectedRedisConfig() == null) {
                 return@EventHandler
             }
-            if (!checkAndConfigRedis()) {
-                error("", "Redis connection failed,please check your redis configuration.")
-                return@EventHandler
-            }
-            // change "create or edit button" text
-            setBtnCreateOrEditText()
+
+
             // load db list
             loadDbList()
 
@@ -297,7 +295,7 @@ class MainView : View("Jmedis") {
 
         // on key/pattern textfield text change
         textFieldPattern.textProperty().onChange {
-//            loadKeyListToViewList()
+            //            loadKeyListToViewList()
         }
 
         // on key/pattern textfield typed in Enter
@@ -352,7 +350,7 @@ class MainView : View("Jmedis") {
         }
     }
 
-    private fun checkAndConfigRedis() : Boolean {
+    private fun checkAndConfigRedis(): Boolean {
 
         val redisConfig: RedisConfig? = getSelectedRedisConfig()
 
@@ -460,8 +458,19 @@ class MainView : View("Jmedis") {
      * load db list to comboChooseDatabase
      */
     private fun loadDbList() {
-        val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
-        comboChooseDatabase.items = dbList
+
+        runAsync {
+            comboChooseDatabase.isDisable = true
+            if (!checkAndConfigRedis()) {
+                kotlin.error("")
+            }
+            val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
+            comboChooseDatabase.items = dbList
+        } fail {
+            error("", "Redis connection failed,please check your redis configuration.")
+        } finally {
+            comboChooseDatabase.isDisable = false
+        }
     }
 
     private fun getSelectedRedisConfig(): RedisConfig? {
