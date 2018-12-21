@@ -310,7 +310,7 @@ class MainView : View("Jmedis") {
 
         // on change value format combo
         comboDataFormat.onAction = EventHandler {
-            textAreaValue.text = StringUtils.formatJson(redisValueText, isHash, getFormatType())
+            textAreaValue.text = StringUtils.formatJson(textAreaValue.text, isHash, getFormatType())
         }
 
         // on key textfield typed in Enter
