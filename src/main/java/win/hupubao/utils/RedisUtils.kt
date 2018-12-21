@@ -18,13 +18,9 @@ package win.hupubao.utils
 
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import redis.clients.jedis.*
-import redis.clients.jedis.exceptions.JedisConnectionException
-import redis.clients.jedis.exceptions.JedisDataException
 import win.hupubao.beans.RedisDB
 
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -33,13 +29,14 @@ import kotlin.collections.ArrayList
  */
 object RedisUtils {
 
-    private var jedisPool: JedisPool? = null
+    lateinit var jedisPool: JedisPool
     private const val MAX_ACTIVE = 50
     private const val MAX_WAIT = 1000L
     private const val MAX_IDLE = 10
-    private const val TIMEOUT = 3000
+    // 2 seconds
+    private const val TIMEOUT = 2000
 
-    private var DB = 0
+    private var DB_INDEX_DEFAULT = 0
 
 
     /**
@@ -48,9 +45,9 @@ object RedisUtils {
      */
     private val jedis: Jedis
         get() {
-            val jedis: Jedis? = jedisPool!!.resource
-            jedis!!.select(DB)
-            return jedis!!
+            val jedis: Jedis = jedisPool.resource
+            jedis.select(DB_INDEX_DEFAULT)
+            return jedis
         }
 
     fun config(host: String,
@@ -76,6 +73,7 @@ object RedisUtils {
         config.maxWaitMillis = maxWait
         // 设置空间连接
         config.maxIdle = maxIdle
+
         jedisPool = if (StringUtils.isEmpty(password)) {
             JedisPool(config, host, port)
         } else {
@@ -160,7 +158,7 @@ object RedisUtils {
     }
 
     fun selectDB(dbIndex: Int) {
-        DB = dbIndex
+        DB_INDEX_DEFAULT = dbIndex
     }
 
     fun info(selection: String): String {
