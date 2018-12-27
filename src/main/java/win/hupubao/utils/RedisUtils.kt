@@ -192,14 +192,7 @@ object RedisUtils {
         }
     }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
 
-        config("127.0.0.1", 6379, "123456")
-
-        print(JSON.toJSONString(dbList()))
-
-    }
 
     fun hkeys(key: String): Set<String> {
         return jedis.use { jedis -> jedis.hkeys(key) }
@@ -215,5 +208,18 @@ object RedisUtils {
 
     fun hdel(key: String, field: String): Long {
         return jedis.use { jedis -> jedis.hdel(key, field) }
+    }
+
+    fun ttl(key: String): Long {
+        return jedis.use { jedis -> jedis.ttl(key) }
+    }
+
+    @JvmStatic
+    fun main(args: Array<String>) {
+
+        config("127.0.0.1", 6379, "123456")
+
+        print(JSON.toJSONString(dbList()))
+
     }
 }

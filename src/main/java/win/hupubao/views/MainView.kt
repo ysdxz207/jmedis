@@ -36,6 +36,7 @@ class MainView : View("Jmedis") {
     lateinit var textFieldPattern: TextField
     lateinit var listViewKeys: ListView<String>
     lateinit var textFieldKey: TextField
+    lateinit var textFieldExpire: TextField
     lateinit var textFieldHKey: TextField
     lateinit var comboDataFormat: ComboBox<FormatType>
     lateinit var textAreaValue: TextArea
@@ -108,7 +109,7 @@ class MainView : View("Jmedis") {
                         // on select key listView
                         onUserSelect(1) {
                             textFieldKey.text = it
-                            loadRedisValue()
+                            getRedisValue()
                         }
                     }
                 }
@@ -119,8 +120,18 @@ class MainView : View("Jmedis") {
                 paddingTop = 10.0
 
                 vbox {
-                    textFieldKey = textfield {
-                        promptText = "key"
+                    hbox {
+                        spacing = 4.0
+                        hgrow = Priority.ALWAYS
+                        textFieldKey = textfield {
+                            promptText = "key"
+                            prefWidth = 10000.0
+                        }
+
+                        textFieldExpire = textfield {
+                            promptText = "expire"
+                            prefWidth = 180.0
+                        }
                     }
                 }
 
@@ -249,7 +260,7 @@ class MainView : View("Jmedis") {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                loadRedisValue()
+                getRedisValue()
             }
         }
         // action on set button
@@ -314,14 +325,14 @@ class MainView : View("Jmedis") {
         // on key textfield typed in Enter
         textFieldKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadRedisValue()
+                getRedisValue()
             }
         }
 
         // on field textfield typed in Enter
         textFieldHKey.onKeyReleased = EventHandler {
             if (it.code == KeyCode.ENTER) {
-                loadRedisValue()
+                getRedisValue()
             }
         }
 
@@ -370,7 +381,7 @@ class MainView : View("Jmedis") {
     /**
      * load value to textfield by get
      */
-    fun loadRedisValue() {
+    fun getRedisValue() {
         val key = textFieldKey.text
         if (StringUtils.isEmpty(key)) {
             return
@@ -420,6 +431,11 @@ class MainView : View("Jmedis") {
         }
         redisValueText = StringUtils.formatJson(text, isHash, getFormatType())
         textAreaValue.text = redisValueText
+
+        // get expire
+        runAsync {
+            textFieldExpire.text = RedisUtils.ttl(key).toString()
+        }
     }
 
     /**

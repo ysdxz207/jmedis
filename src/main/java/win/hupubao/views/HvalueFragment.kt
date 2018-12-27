@@ -83,7 +83,7 @@ class HvalueFragment : Fragment() {
                                         error("", "Error:" + e.message)
                                     }
                                     closeDialog()
-                                    mainView.loadRedisValue()
+                                    mainView.getRedisValue()
                                 }
                             }
                         }
@@ -104,7 +104,7 @@ class HvalueFragment : Fragment() {
                                     }
 
                                     closeDialog()
-                                    mainView.loadRedisValue()
+                                    mainView.getRedisValue()
                                 }
                             }
 
