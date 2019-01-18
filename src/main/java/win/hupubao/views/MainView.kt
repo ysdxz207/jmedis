@@ -291,11 +291,16 @@ class MainView : View("Jmedis") {
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
                     try {
+                        var expire = Integer.valueOf(textFieldExpire.text)
+
                         if (!hash) {
                             RedisUtils[textFieldKey.text] = textAreaValue.text
                         } else {
                             RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
                         }
+
+                        RedisUtils.expire(textFieldKey.text, expire)
+
                         information("", "Success!")
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
@@ -319,7 +324,7 @@ class MainView : View("Jmedis") {
 
         // on change value format combo
         comboDataFormat.onAction = EventHandler {
-            textAreaValue.text = StringUtils.formatJson(textAreaValue.text, isHash, getFormatType())
+            getRedisValue()
         }
 
         // on key textfield typed in Enter

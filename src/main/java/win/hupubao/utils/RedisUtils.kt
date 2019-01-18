@@ -214,6 +214,10 @@ object RedisUtils {
         return jedis.use { jedis -> jedis.ttl(key) }
     }
 
+    fun expire(key: String, expireSeconds: Int): Long {
+        jedis.use { jedis -> return jedis.expire(key, expireSeconds) }
+    }
+
     @JvmStatic
     fun main(args: Array<String>) {
 
