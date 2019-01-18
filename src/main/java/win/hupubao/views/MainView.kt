@@ -129,8 +129,12 @@ class MainView : View("Jmedis") {
                         }
 
                         textFieldExpire = textfield {
-                            promptText = "expire"
+                            promptText = "TTL"
                             prefWidth = 180.0
+
+                            tooltip {
+                                text = "TTL"
+                            }
                         }
                     }
                 }
