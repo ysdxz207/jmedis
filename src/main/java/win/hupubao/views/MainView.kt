@@ -295,7 +295,7 @@ class MainView : View("Jmedis") {
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
                     try {
-                        var expire = Integer.valueOf(textFieldExpire.text)
+                        val expire = Integer.valueOf(textFieldExpire.text)
 
                         if (!hash) {
                             RedisUtils[textFieldKey.text] = textAreaValue.text
@@ -303,7 +303,9 @@ class MainView : View("Jmedis") {
                             RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
                         }
 
-                        RedisUtils.expire(textFieldKey.text, expire)
+                        if (expire != -1) {
+                            RedisUtils.expire(textFieldKey.text, expire)
+                        }
 
                         information("", "Success!")
                     } catch (e: Exception) {
