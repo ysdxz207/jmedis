@@ -6,7 +6,7 @@
 
     <groupId>win.hupubao</groupId>
     <artifactId>jmedis</artifactId>
-    <version>Beta-1.0</version>
+    <version>1.0.0-RELEASE</version>
     <description>Redis management tool.</description>
     <organization>
         <name>ysdxz207</name>
