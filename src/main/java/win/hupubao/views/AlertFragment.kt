@@ -2,10 +2,18 @@ package win.hupubao.views
 
 import javafx.geometry.Pos
 import javafx.scene.control.Label
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.stage.StageStyle
 import tornadofx.*
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.BorderStrokeStyle
+
+
 
 class AlertFragment : Fragment() {
 
@@ -15,10 +23,11 @@ class AlertFragment : Fragment() {
     override val root = vbox {
 
         prefHeight = 60.0
-        prefWidth = 200.0
+        prefWidth = 168.0
 
         style {
             backgroundColor = multi(Paint.valueOf("#606266"))
+            backgroundRadius = multi(box(28.px))
         }
         vboxConstraints {
             alignment = Pos.CENTER
