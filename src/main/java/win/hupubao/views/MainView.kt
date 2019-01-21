@@ -399,6 +399,8 @@ class MainView : View("Jmedis") {
      * load value to textfield by get
      */
     fun getRedisValue() {
+        // set hkey enabled
+        textFieldHKey.isDisable = false
         val key = textFieldKey.text
         if (StringUtils.isEmpty(key)) {
             return
@@ -448,6 +450,11 @@ class MainView : View("Jmedis") {
         }
         redisValueText = StringUtils.formatJson(text, isHash, getFormatType())
         textAreaValue.text = redisValueText
+
+        if (!isHash) {
+            // set hkey disabled
+            textFieldHKey.isDisable = true
+        }
 
         // get expire
         runAsync {
