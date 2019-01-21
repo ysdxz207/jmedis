@@ -16,6 +16,7 @@ import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
 import win.hupubao.beans.RedisValue
 import win.hupubao.enums.FormatType
+import win.hupubao.utils.Alert
 import win.hupubao.utils.ConfigUtils
 import win.hupubao.utils.RedisUtils
 import win.hupubao.utils.StringUtils
@@ -307,7 +308,7 @@ class MainView : View("Jmedis") {
                             RedisUtils.expire(textFieldKey.text, expire)
                         }
 
-                        information("", "Success!")
+                        Alert.show("Success!", 1200L)
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
                     }
@@ -362,7 +363,7 @@ class MainView : View("Jmedis") {
                         } else {
                             RedisUtils.delete(textFieldKey.text)
                         }
-                        information("", "Success!")
+                        Alert.show("Success!", 1200L)
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
                     }
