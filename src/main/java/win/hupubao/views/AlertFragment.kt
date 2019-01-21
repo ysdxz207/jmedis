@@ -22,12 +22,12 @@ class AlertFragment : Fragment() {
 
     override val root = vbox {
 
-        prefHeight = 60.0
+        prefHeight = 54.0
         prefWidth = 168.0
 
         style {
             backgroundColor = multi(Paint.valueOf("#606266"))
-            backgroundRadius = multi(box(28.px))
+            backgroundRadius = multi(box(26.px))
         }
         vboxConstraints {
             alignment = Pos.CENTER

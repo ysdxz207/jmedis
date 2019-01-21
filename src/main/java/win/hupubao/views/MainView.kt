@@ -296,7 +296,12 @@ class MainView : View("Jmedis") {
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
                     try {
-                        val expire = Integer.valueOf(textFieldExpire.text)
+                        val expire: Int
+                        try {
+                            expire = Integer.valueOf(textFieldExpire.text)
+                        } catch (e: NumberFormatException) {
+                            throw Exception("TTL should be a number.")
+                        }
 
                         if (!hash) {
                             RedisUtils[textFieldKey.text] = textAreaValue.text
