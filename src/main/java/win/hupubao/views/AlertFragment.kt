@@ -2,17 +2,10 @@ package win.hupubao.views
 
 import javafx.geometry.Pos
 import javafx.scene.control.Label
-import javafx.scene.layout.Border
-import javafx.scene.layout.BorderStroke
-import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.stage.StageStyle
 import tornadofx.*
-import javafx.scene.layout.BorderWidths
-import javafx.scene.layout.CornerRadii
-import javafx.scene.layout.BorderStrokeStyle
-
 
 
 class AlertFragment : Fragment() {
