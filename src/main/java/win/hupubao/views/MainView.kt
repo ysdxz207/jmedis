@@ -19,10 +19,8 @@ import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
 import win.hupubao.beans.RedisValue
 import win.hupubao.enums.FormatType
+import win.hupubao.utils.*
 import win.hupubao.utils.Alert
-import win.hupubao.utils.ConfigUtils
-import win.hupubao.utils.RedisUtils
-import win.hupubao.utils.StringUtils
 import java.awt.Desktop
 import java.io.IOException
 import java.net.URI
@@ -402,11 +400,13 @@ class MainView : View("Jmedis") {
      * load value to textfield by get
      */
     fun getRedisValue() {
+        Loading.show()
         runAsync {
             // set hkey enabled
             textFieldHKey.isDisable = false
             val key = textFieldKey.text
             if (StringUtils.isEmpty(key)) {
+                Loading.hide()
                 return@runAsync
             }
 
@@ -415,6 +415,7 @@ class MainView : View("Jmedis") {
                     root.requestFocus()
                     error("", "Redis connection failed,please check your redis configuration.")
                 }
+                Loading.hide()
                 return@runAsync
             }
 
@@ -467,6 +468,7 @@ class MainView : View("Jmedis") {
             runAsync {
                 textFieldExpire.text = RedisUtils.ttl(key).toString()
             }
+            Loading.hide()
         }
     }
 
@@ -487,10 +489,14 @@ class MainView : View("Jmedis") {
         if (!StringUtils.isEmpty(textFieldPattern.text)
                 && getSelectedRedisConfig() != null
                 && getSelectedDatabase() != null) {
+            Loading.show()
             listViewKeys.asyncItems {
 
+                val keys = RedisUtils.keys(textFieldPattern.text)
                 // get keys by key or pattern
-                FXCollections.observableArrayList(RedisUtils.keys(textFieldPattern.text))
+                val list = FXCollections.observableArrayList(keys)
+                Loading.hide()
+                list
             }
         }
     }
