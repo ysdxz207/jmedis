@@ -15,11 +15,11 @@ fun sort(arr: IntArray, leftIndex: Int, rightIndex: Int) {
         return
     val primary = arr[leftIndex]
     while (tempLeftIndex != tempRightIndex) {
-        // 从左往右
-        while (arr[tempRightIndex] >= primary && tempLeftIndex < tempRightIndex)
+        // 从右往左第一个比基准值小的(最右边的比基准值小的)
+        while (arr[tempRightIndex] <= primary && tempLeftIndex < tempRightIndex)
             tempRightIndex--
-        // 从右往左
-        while (arr[tempLeftIndex] <= primary && tempLeftIndex < tempRightIndex)
+        // 从左往右第一个比基准值大的(最左边的比基准值大的)
+        while (arr[tempLeftIndex] >= primary && tempLeftIndex < tempRightIndex)
             tempLeftIndex++
         // 利用异或位运算交换位置
         if (tempLeftIndex < tempRightIndex) {
@@ -28,6 +28,8 @@ fun sort(arr: IntArray, leftIndex: Int, rightIndex: Int) {
             arr[tempLeftIndex] = arr[tempLeftIndex] xor arr[tempRightIndex]
         }
     }
+
+
     arr[leftIndex] = arr[tempLeftIndex]
     arr[tempLeftIndex] = primary
     sort(arr, leftIndex, tempLeftIndex - 1)
