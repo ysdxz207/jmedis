@@ -175,9 +175,29 @@ object RedisUtils {
 
     fun dbList(): List<RedisDB> {
         val listDB = ArrayList<RedisDB>()
+        val listDBHasKeys = ArrayList<RedisDB>()
+
+
+
+        // 查询所有db
+        val databasesInfo = RedisUtils.configGet("databases")
+
+
+
+        val n = databasesInfo[1].toInt()
+        for (i in 0 until n) {
+            val redisDB = RedisDB()
+            redisDB.index = i
+            redisDB.name = "db$i"
+            redisDB.keysNum = 0
+            redisDB.expires = -1
+            listDB.add(redisDB)
+        }
+
+        // 查询有key的db
         val keyspace = info("keyspace")
-        val list = keyspace.replace("\"", "").split("\r\n")
-        for (str in list.subList(1, list.size - 1)) {
+        val listDatabaseInfo = keyspace.replace("\"", "").split("\r\n")
+        for (str in listDatabaseInfo.subList(1, listDatabaseInfo.size - 1)) {
             val redisDB = RedisDB()
             val ls = str.split(":")
             val lsMap = ls[1].split(",")
@@ -185,10 +205,21 @@ object RedisUtils {
             redisDB.name = ls[0]
             redisDB.keysNum = lsMap[0].split("=")[1].toInt()
             redisDB.expires = lsMap[1].split("=")[1].toLong()
-            listDB.add(redisDB)
+            listDBHasKeys.add(redisDB)
         }
+
+        listDB.forEachIndexed{index1, redisDB1 ->
+            listDBHasKeys.forEachIndexed { index2, redisDB2 ->
+                if (index1 == index2) {
+                    redisDB1.keysNum = redisDB2.keysNum
+                    redisDB1.expires = redisDB2.expires
+                }
+
+            }
+        }
+
         return listDB.sortedBy {
-            it.name
+            it.index
         }
     }
 
