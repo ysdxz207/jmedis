@@ -16,8 +16,8 @@ object StringUtils {
                 false
             }
 
-    fun isEmpty(str: String?): Boolean {
-        return str == null || str.isEmpty()
+    fun isEmpty(str: Any?): Boolean {
+        return str == null || str.toString().isEmpty()
     }
 
     fun isJson(value: String?): Boolean {
@@ -66,19 +66,20 @@ object StringUtils {
         return JSON.toJSONString(parseToJson(value, deepFormat), SerializerFeature.PrettyFormat)
     }
 
-    fun formatJson(value: String?, hash:Boolean, formatType: FormatType): String? {
-        if (isEmpty(value) || !StringUtils.isJson(value)) {
-            return value
+    fun formatJson(value: Any?, hash:Boolean, formatType: FormatType): String? {
+        if (isEmpty(value) || !StringUtils.isJson(JSON.toJSONString(value))) {
+            return value.toString()
         }
+        val jsonValue = JSON.toJSONString(value)
         return when (formatType) {
-            FormatType.Json -> formatJson(value, false)
-            FormatType.Text ->  if (isJson(value)) JSON.parse(value).toString() else value
-            FormatType.JsonPlus -> formatJson(value, true)
+            FormatType.Json -> formatJson(jsonValue, false)
+            FormatType.Text ->  if (isJson(jsonValue)) JSON.parse(jsonValue).toString() else jsonValue
+            FormatType.JsonPlus -> formatJson(jsonValue, true)
             FormatType.JsonPlusList -> if (hash) {
                 val json = parseToJson(value, true) as JSONObject
                 JSON.toJSONString(json.values, SerializerFeature.PrettyFormat)
             } else {
-                formatJson(value, true)
+                formatJson(jsonValue, true)
             }
         }
     }

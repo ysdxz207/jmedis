@@ -3,6 +3,7 @@ package win.hupubao.views
 import com.alibaba.fastjson.JSON
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
+import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.event.EventHandler
 import javafx.geometry.Side
@@ -38,6 +39,7 @@ class MainView : View("Jmedis") {
     lateinit var textFieldPattern: TextField
     lateinit var listViewKeys: ListView<String>
     lateinit var textFieldKey: TextField
+    lateinit var labelType: Label
     lateinit var textFieldExpire: TextField
     lateinit var textFieldHKey: TextField
     lateinit var comboDataFormat: ComboBox<FormatType>
@@ -45,7 +47,6 @@ class MainView : View("Jmedis") {
     lateinit var tableViewValueList: TableView<RedisValue>
 
     val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
-    var isHash: Boolean = false
     var redisValueText: String? = ""
 
     override val root = vbox {
@@ -128,6 +129,11 @@ class MainView : View("Jmedis") {
                         textFieldKey = textfield {
                             promptText = "key"
                             prefWidth = 10000.0
+                        }
+
+                        label("Type:")
+                        labelType = label {
+
                         }
 
                         textFieldExpire = textfield {
@@ -276,27 +282,16 @@ class MainView : View("Jmedis") {
                 return@EventHandler
             }
 
-            val hash: Boolean = !StringUtils.isEmpty(textFieldHKey.text)
 
-            var confirmationText = "Set confirmation."
+            val confirmationText = "Set confirmation."
 
-            if (!hash) {
+            val type = RedisUtils.type(textFieldKey.text)
 
-                val hasHash: Boolean = try {
-                    RedisUtils.hkeys(textFieldKey.text)
-                    true
-                } catch (e: Exception) {
-                    false
-                }
-
-                if (hasHash) {
-                    confirmationText = "This key has a hash value. Do you want to overwrite it?"
-                }
-            }
 
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
                     try {
+
                         val expire: Int
                         try {
                             expire = Integer.valueOf(textFieldExpire.text)
@@ -304,22 +299,38 @@ class MainView : View("Jmedis") {
                             throw Exception("TTL should be a number.")
                         }
 
-                        if (!hash) {
-                            RedisUtils[textFieldKey.text] = textAreaValue.text
-                        } else {
-                            RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+                        var success = false
+
+
+                        when (type) {
+                            "string" -> {
+                                RedisUtils[textFieldKey.text] = textAreaValue.text
+                                success = true
+                            }
+
+                            "hash" -> {
+                                RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
+                                success = true
+                            }
+
+                            else -> {
+                                error("", "Do not support \"$type\" type now.")
+                            }
                         }
 
-                        if (expire != -1) {
-                            RedisUtils.expire(textFieldKey.text, expire)
-                        }
+                        if (success) {
+                            if (expire != -1) {
+                                RedisUtils.expire(textFieldKey.text, expire)
+                            }
 
-                        Alert.show("Success!", 1200L)
+                            Alert.show("Success!", 1200L)
+                        }
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
                     }
                 }
             }
+
         }
 
         // on key/pattern textfield text change
@@ -401,14 +412,22 @@ class MainView : View("Jmedis") {
      */
     fun getRedisValue() {
         Loading.show()
-        runAsync {
+        val key = textFieldKey.text
+        if (StringUtils.isEmpty(key)) {
+            Loading.hide()
+            return
+        }
+
+
+        // get expire
+        Platform.runLater {
+            textFieldExpire.text = RedisUtils.ttl(key).toString()
+            val type = RedisUtils.type(key)
+            labelType.text = type
+
             // set hkey enabled
             textFieldHKey.isDisable = false
-            val key = textFieldKey.text
-            if (StringUtils.isEmpty(key)) {
-                Loading.hide()
-                return@runAsync
-            }
+
 
             if (!checkAndConfigRedis()) {
                 GlobalScope.launch(Dispatchers.Main) {
@@ -416,47 +435,61 @@ class MainView : View("Jmedis") {
                     error("", "Redis connection failed,please check your redis configuration.")
                 }
                 Loading.hide()
-                return@runAsync
+                return@runLater
             }
 
             hvalueList.clear()
 
+            var isHash = false
 
-            isHash = try {
-                RedisUtils.hkeys(textFieldKey.text)
-                true
-            } catch (e: Exception) {
-                false
-            }
-
-            val text: String? = if (isHash) {
-                // hash
-                if (StringUtils.isEmpty(textFieldHKey.text)) {
-
-                    val map = RedisUtils.hgetAll(key)
-                    if (!map.isEmpty()) {
-                        // set tablevalue value list
-                        map.forEach {
-                            val hvalue = RedisValue()
-                            hvalue.key = it.key
-                            hvalue.value = it.value
-                            hvalueList.add(hvalue)
-                        }
-                        JSON.toJSONString(map)
-                    } else {
-                        ""
-                    }
-                } else {
-                    RedisUtils.hget(key, textFieldHKey.text)
+            val value: Any? = when (type) {
+                "string" -> {
+                    RedisUtils[key]
                 }
-            } else {
-                RedisUtils[key]
+                "hash" -> {
+                    isHash = true
+                    if (StringUtils.isEmpty(textFieldHKey.text)) {
+
+                        val map = RedisUtils.hgetAll(key)
+                        if (!map.isEmpty()) {
+                            // set tablevalue value list
+                            map.forEach {
+                                val hvalue = RedisValue()
+                                hvalue.key = it.key
+                                hvalue.value = it.value
+                                hvalueList.add(hvalue)
+                            }
+                            JSON.toJSONString(map)
+                        } else {
+                            ""
+                        }
+                    } else {
+                        RedisUtils.hget(key, textFieldHKey.text)
+                    }
+                }
+                "list" -> {
+                    RedisUtils.getList(key)
+                }
+                "set" -> {
+                    RedisUtils.smembers(key)
+                }
+                "zset" -> {
+                    RedisUtils.getZSet(key)
+                }
+
+                "none" -> {
+                    ""
+                }
+                else -> {
+                    ""
+                }
             }
+
 
             tableViewValueList.asyncItems {
                 FXCollections.observableList(hvalueList)
             }
-            redisValueText = StringUtils.formatJson(text, isHash, getFormatType())
+            redisValueText = StringUtils.formatJson(value, isHash, getFormatType())
             textAreaValue.text = redisValueText
 
             if (!isHash) {
@@ -464,10 +497,7 @@ class MainView : View("Jmedis") {
                 textFieldHKey.isDisable = true
             }
 
-            // get expire
-            runAsync {
-                textFieldExpire.text = RedisUtils.ttl(key).toString()
-            }
+
             Loading.hide()
         }
     }

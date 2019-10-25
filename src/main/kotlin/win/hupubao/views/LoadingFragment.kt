@@ -2,12 +2,14 @@ package win.hupubao.views
 
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
+import javafx.stage.Stage
 import javafx.stage.StageStyle
 import tornadofx.*
 
 
 class LoadingFragment : Fragment() {
     private val mainView: MainView by inject()
+
 
     override val root = vbox {
         imageview(image = Image(resources.stream("/image/loading.gif")))
@@ -43,8 +45,9 @@ class LoadingFragment : Fragment() {
         val x = mainX + (mainWidth.div(2)) - (width.div(2))
         val y = mainY + (mainHeight.div(2)) - (height.div(2))
 
-        this.currentStage?.x = x
-        this.currentStage?.y = y
+        currentStage?.x = x
+        currentStage?.y = y
+
     }
 
     fun hide() {

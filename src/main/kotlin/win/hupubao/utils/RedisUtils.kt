@@ -146,6 +146,27 @@ object RedisUtils {
         } else RedisUtils.delete(*keys)
     }
 
+    fun getList(key: String): List<String> {
+        jedis.use { jedis ->
+            val len = jedis.llen(key)
+            return jedis.lrange(key, 0, len)
+        }
+    }
+
+
+    fun smembers(key: String): Set<String> {
+        jedis.use { jedis ->
+            return jedis.smembers(key)
+        }
+    }
+
+    fun getZSet(key: String): Set<Tuple> {
+        jedis.use { jedis ->
+            val end = jedis.zcard(key)
+            return jedis.zrevrangeWithScores(key, 0, end)
+        }
+    }
+
     fun keys(pattern: String): Set<String> {
         jedis.use { jedis -> return jedis.keys(pattern) }
     }
@@ -243,6 +264,10 @@ object RedisUtils {
 
     fun ttl(key: String): Long {
         return jedis.use { jedis -> jedis.ttl(key) }
+    }
+
+    fun type(key: String): String {
+        return jedis.use { jedis -> jedis.type(key) }
     }
 
     fun expire(key: String, expireSeconds: Int): Long {
