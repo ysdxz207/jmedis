@@ -39,7 +39,7 @@ class MainView : View("Jmedis") {
     lateinit var textFieldPattern: TextField
     lateinit var listViewKeys: ListView<String>
     lateinit var textFieldKey: TextField
-    lateinit var labelType: Label
+    lateinit var comboType: ComboBox<String>
     lateinit var textFieldExpire: TextField
     lateinit var textFieldHKey: TextField
     lateinit var comboDataFormat: ComboBox<FormatType>
@@ -132,8 +132,12 @@ class MainView : View("Jmedis") {
                         }
 
                         label("Type:")
-                        labelType = label {
+                        comboType = combobox {
+                            items = observableList("none", "string", "list", "set", "zset", "hash")
 
+                            onAction = EventHandler {
+                                textFieldHKey.isDisable = comboType.value != "hash"
+                            }
                         }
 
                         textFieldExpire = textfield {
@@ -143,6 +147,8 @@ class MainView : View("Jmedis") {
                             tooltip {
                                 text = "TTL"
                             }
+
+                            text = "-1"
                         }
                     }
                 }
@@ -157,6 +163,8 @@ class MainView : View("Jmedis") {
                         textFieldHKey = textfield {
                             promptText = "field"
                             prefWidth = 10000.0
+
+                            isDisable = true
                         }
 
                         comboDataFormat = combobox {
@@ -285,7 +293,11 @@ class MainView : View("Jmedis") {
 
             val confirmationText = "Set confirmation."
 
-            val type = RedisUtils.type(textFieldKey.text)
+            var type = RedisUtils.type(textFieldKey.text)
+
+            if (type == "none") {
+                type = comboType.value
+            }
 
 
             confirmation("", confirmationText) { confirmSet ->
@@ -423,7 +435,7 @@ class MainView : View("Jmedis") {
         Platform.runLater {
             textFieldExpire.text = RedisUtils.ttl(key).toString()
             val type = RedisUtils.type(key)
-            labelType.text = type
+            comboType.selectionModel.select(type)
 
             // set hkey enabled
             textFieldHKey.isDisable = false
