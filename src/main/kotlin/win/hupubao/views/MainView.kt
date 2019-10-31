@@ -135,6 +135,8 @@ class MainView : View("Jmedis") {
                         comboType = combobox {
                             items = observableList("none", "string", "list", "set", "zset", "hash")
 
+                            value = "none"
+
                             onAction = EventHandler {
                                 textFieldHKey.isDisable = comboType.value != "hash"
                             }
@@ -336,6 +338,10 @@ class MainView : View("Jmedis") {
                             }
 
                             Alert.show("Success!", 1200L)
+
+                            Platform.runLater {
+                                loadDbList()
+                            }
                         }
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
@@ -393,6 +399,9 @@ class MainView : View("Jmedis") {
                             RedisUtils.delete(textFieldKey.text)
                         }
                         Alert.show("Success!", 1200L)
+                        Platform.runLater {
+                            loadDbList()
+                        }
                     } catch (e: Exception) {
                         error("", "Error:" + e.message)
                     }
@@ -555,17 +564,23 @@ class MainView : View("Jmedis") {
      */
     private fun loadDbList() {
 
-        runAsync {
-            comboChooseDatabase.isDisable = true
-            if (!checkAndConfigRedis()) {
-                kotlin.error("")
+        Platform.runLater {
+            try {
+                comboChooseDatabase.isDisable = true
+
+                val selectedIndex = comboChooseDatabase.selectionModel.selectedIndex
+                if (!checkAndConfigRedis()) {
+                    kotlin.error("")
+                }
+                val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
+                comboChooseDatabase.items = dbList
+                comboChooseDatabase.selectionModel.select(selectedIndex)
+            } catch (e: Exception) {
+
+                error("", "Redis connection failed,please check your redis configuration.")
+            } finally {
+                comboChooseDatabase.isDisable = false
             }
-            val dbList = FXCollections.observableArrayList(RedisUtils.dbList())
-            comboChooseDatabase.items = dbList
-        } fail {
-            error("", "Redis connection failed,please check your redis configuration.")
-        } finally {
-            comboChooseDatabase.isDisable = false
         }
     }
 
