@@ -134,7 +134,7 @@ class MainView : View("Jmedis") {
                         label("Type:")
                         comboType = combobox {
                             promptText = "Choose Type"
-                            minWidth = 90.0
+                            minWidth = 94.0
                             items = observableList("none", "string", "list", "set", "zset", "hash")
 
                             value = "none"
@@ -283,7 +283,7 @@ class MainView : View("Jmedis") {
                 // reload keys
                 loadKeyListToViewList()
                 // reload value
-                getRedisValue()
+//                getRedisValue()
             }
         }
         // action on set button
