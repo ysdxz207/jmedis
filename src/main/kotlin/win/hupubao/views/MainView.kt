@@ -128,11 +128,13 @@ class MainView : View("Jmedis") {
                         hgrow = Priority.ALWAYS
                         textFieldKey = textfield {
                             promptText = "key"
-                            prefWidth = 10000.0
+                            prefWidth = 1000.0
                         }
 
                         label("Type:")
                         comboType = combobox {
+                            promptText = "Choose Type"
+                            minWidth = 90.0
                             items = observableList("none", "string", "list", "set", "zset", "hash")
 
                             value = "none"
@@ -144,8 +146,7 @@ class MainView : View("Jmedis") {
 
                         textFieldExpire = textfield {
                             promptText = "TTL"
-                            prefWidth = 180.0
-
+                            minWidth = 90.0
                             tooltip {
                                 text = "TTL"
                             }

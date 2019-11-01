@@ -16,7 +16,6 @@ Button:pressed {
 }
 
 TextField, PasswordField {
-    -fx-min-width: 200px;
     -fx-min-height: 32px;
     -fx-max-height: 32px;
     -fx-pref-height: 32px;
@@ -26,7 +25,6 @@ TextField, PasswordField {
 
 ComboBox {
     -fx-pref-height: 32px;
-    -fx-min-width: 180px;
     -fx-background-color: #f5f5f5;
     -fx-border-color: #DDDDDD;
     -fx-border-radius: 4px;
