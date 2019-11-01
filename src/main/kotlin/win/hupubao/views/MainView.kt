@@ -296,12 +296,7 @@ class MainView : View("Jmedis") {
 
             val confirmationText = "Set confirmation."
 
-            var type = RedisUtils.type(textFieldKey.text)
-
-            if (type == "none") {
-                type = comboType.value
-            }
-
+            val type = comboType.value
 
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
