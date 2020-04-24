@@ -131,13 +131,11 @@ class MainView : View("Jmedis") {
                             prefWidth = 1000.0
                         }
 
-                        label("Type:")
                         comboType = combobox {
-                            promptText = "Choose Type"
+                            promptText = "Type"
                             minWidth = 94.0
                             items = observableList("none", "string", "list", "set", "zset", "hash")
 
-                            value = "none"
 
                             onAction = EventHandler {
                                 textFieldHKey.isDisable = comboType.value != "hash"
@@ -298,6 +296,11 @@ class MainView : View("Jmedis") {
 
             val type = comboType.value
 
+            if (type == null) {
+                error("", "Please choose type.")
+                return@EventHandler
+            }
+
             confirmation("", confirmationText) { confirmSet ->
                 if (confirmSet == ButtonType.OK) {
                     try {
@@ -321,10 +324,6 @@ class MainView : View("Jmedis") {
                             "hash" -> {
                                 RedisUtils.hset(textFieldKey.text, textFieldHKey.text, textAreaValue.text)
                                 success = true
-                            }
-
-                            else -> {
-                                error("", "Do not support \"$type\" type now.")
                             }
                         }
 
