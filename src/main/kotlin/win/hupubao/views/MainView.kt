@@ -46,7 +46,7 @@ class MainView : View("Jmedis") {
     lateinit var textAreaValue: TextArea
     lateinit var tableViewValueList: TableView<RedisValue>
 
-    val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
+    private val hvalueList: MutableList<RedisValue> = emptyList<RedisValue>().toMutableList()
     var redisValueText: String? = ""
 
     override val root = vbox {
