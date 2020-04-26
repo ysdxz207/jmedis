@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import tornadofx.*
+import win.hupubao.App.Companion.windowSize
 import win.hupubao.beans.RedisConfig
 import win.hupubao.beans.RedisDB
 import win.hupubao.beans.RedisValue
@@ -50,8 +51,8 @@ class MainView : View("Jmedis") {
     var redisValueText: String? = ""
 
     override val root = vbox {
-        prefWidth = 960.0
-        prefHeight = 580.0
+        prefWidth = windowSize.width
+        prefHeight = windowSize.height
 
         paddingLeft = 20
         paddingRight = 20
@@ -107,8 +108,9 @@ class MainView : View("Jmedis") {
 
                 vbox {
                     paddingTop = 4.0
+                    paddingBottom = 10.0
                     listViewKeys = listview {
-                        minHeight = 444.0 + 32.0 + 4.0
+                        prefHeight = 10000.0
                         // on select key listView
                         onUserSelect(1) {
                             textFieldKey.text = it
@@ -134,7 +136,7 @@ class MainView : View("Jmedis") {
                         comboType = combobox {
                             promptText = "Type"
                             minWidth = 94.0
-                            items = observableList("none", "string", "list", "set", "zset", "hash")
+                            items = observableListOf("none", "string", "list", "set", "zset", "hash")
 
 
                             onAction = EventHandler {
@@ -184,8 +186,9 @@ class MainView : View("Jmedis") {
 
                     drawer(side = Side.RIGHT, multiselect = false) {
                         item(title = "Text", expanded = true) {
+                            paddingBottom = 10
                             textAreaValue = textarea {
-                                minHeight = 444.0
+                                prefHeight = 10000.0
                                 minWidth = 610.0
                                 prefWidth = 610.0
 
@@ -238,7 +241,9 @@ class MainView : View("Jmedis") {
 
 
     init {
-        currentStage?.isResizable = false
+        currentStage?.isResizable = true
+        currentStage?.minWidth = windowSize.width
+        currentStage?.minHeight = windowSize.height
 
         importStylesheet("/css/style.css")
 
