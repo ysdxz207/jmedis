@@ -89,7 +89,7 @@ object StringUtils {
             FormatType.JsonPlus -> formatJson(jsonValue, true)
             FormatType.JsonPlusList -> if (hash) {
                 val json = parseToJson(value, true) as JSONObject
-                JSON.toJSONString(json.values, SerializerFeature.PrettyFormat)
+                JSON.toJSONString(json.values, true)
             } else {
                 formatJson(jsonValue, true)
             }
