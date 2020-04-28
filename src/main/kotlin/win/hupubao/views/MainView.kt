@@ -241,7 +241,7 @@ class MainView : View("Jmedis") {
 
 
     init {
-        currentStage?.isResizable = true
+        currentStage?.isResizable = false
         currentStage?.minWidth = windowSize.width
         currentStage?.minHeight = windowSize.height
 
